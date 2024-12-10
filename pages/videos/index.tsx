@@ -2,6 +2,9 @@ import { VideoList } from "@/components";
 import { Video } from "@/types";
 import { GetStaticPropsResult } from "next"
 import Head from "next/head";
+
+import fs from 'fs';
+import path from 'path';
   
 interface IVideosProps {
     videos: Video[];
@@ -25,8 +28,10 @@ export default function VideosPage({ videos }: IVideosProps) {
 
 
 export async function getStaticProps(): Promise<GetStaticPropsResult<IVideosProps>> {
-    const res = await fetch("http://localhost:8080/videos");
-    const videos = await res.json();
+  const dataDirectory = path.join(process.cwd(), 'data');
+  const filePath = path.join(dataDirectory, 'videos.json');
+  const fileContents = fs.readFileSync(filePath, 'utf-8');
+  const videos = JSON.parse(fileContents);
   
     return {
       props: {

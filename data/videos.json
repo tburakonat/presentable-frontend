@@ -1,0 +1,82 @@
+[
+    {
+        "id": "1",
+        "title": "Exploring Machine Learning Applications",
+        "description": "A presentation on the various applications of machine learning in industries like healthcare, finance, and transportation.",
+        "videoUrl": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "videoDuration": "000:09:56",
+        "createdBy": "Alice Johnson",
+        "createdAt": "2024-11-01T10:00:00Z",
+        "feedback": [
+            {
+                "id": "102",
+                "content": "Good presentation!",
+                "createdBy": "Dr. Hendrik Drachsler",
+                "createdAt": "2024-11-04T16:15:00Z",
+                "comments": []
+            }
+        ]
+    },
+    {
+        "id": "4",
+        "title": "Stress im Studium",
+        "description": "Eine Präsentation über die verschiedenen Arten von Stress, die Studenten während ihres Studiums erleben",
+        "videoUrl": "https://res.cloudinary.com/dd4cl3ifk/video/upload/v1733861253/presentable/bbsfvxlvfdbfng2dg3uw.mp4",
+        "videoDuration": "00:02:24",
+        "createdBy": "Talha Burak Onat",
+        "createdAt": "2024-11-06T14:30:00Z",
+        "feedback": [
+            {
+                "id": "101",
+                "content": "## Positive Aspects\n * High-Quality Visuals: The visuals and animations were clean and professionally designed, enhancing the learning experience.\n ## Suggestions for Improvement\n * Audio Quality: There were a few moments of background noise [01:13](01:13). [Here](http://www.example.com/index.html) you can buy a new headset.",
+                "createdBy": "Dr. Emily Carter",
+                "createdAt": "2024-11-02T15:30:00Z",
+                "comments": [
+                    {
+                        "id": "1",
+                        "content": "I do not understand your feedback",
+                        "createdBy": "Talha Burak Onat",
+                        "createdAt": "2024-11-03T15:30:00Z"
+                    },
+                    {
+                        "id": "2",
+                        "content": "Audio quality is not good at [1:13](1:13)",
+                        "createdBy": "Faris Tadoo",
+                        "createdAt": "2024-11-03T15:30:00Z"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "5",
+        "title": "Test rehersal",
+        "description": "A test video for rehersal",
+        "videoUrl": "https://res.cloudinary.com/dd4cl3ifk/video/upload/v1733861509/presentable/mpbzdcx3xbbt1tmr7k3e.mp4",
+        "videoDuration": "00:00:37",
+        "createdBy": "Max Mustermann",
+        "createdAt": "2024-11-23T14:30:00Z",
+        "feedback": [
+            {
+                "id": "107",
+                "content": "## Positive Aspects\n * High-Quality Visuals: The visuals and animations were clean and professionally designed, enhancing the learning experience.\n ## Suggestions for Improvement\n * Audio Quality: There were a few moments of background noise [0:15](00:15). [Here](http://www.example.com/index.html) you can buy a new headset.",
+                "createdBy": "Dr. Di Mitri",
+                "createdAt": "2024-11-02T15:30:00Z",
+                "comments": [
+                    {
+                        "id": "1",
+                        "content": "Thank you for the feedback",
+                        "createdBy": "Max Mustermann",
+                        "createdAt": "2024-11-03T15:30:00Z"
+                    },
+                    {
+                        "id": "2",
+                        "content": "good job bro!",
+                        "createdBy": "Faris Tadoo",
+                        "createdAt": "2024-11-03T15:30:00Z"
+                    }
+                ]
+            }
+        ]
+    }
+]

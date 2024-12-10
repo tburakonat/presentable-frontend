@@ -1,0 +1,236 @@
+[
+    {
+        "RecordingID": "5",
+        "Intervals": [
+            {
+                "start": "00:00:03.305",
+                "end": "00:00:03.573",
+                "annotations": {
+                    "noHands": true,
+                    "feedbackFired": true,
+                    "feedbackMessage": "Don't hide your hands. Keep an open posture"
+                }
+            },
+            {
+                "start": "00:00:08.904",
+                "end": "00:00:10.105",
+                "annotations": {
+                    "handCloseToFace": true,
+                    "feedbackFired": false,
+                    "feedbackMessage": "Lower your hands"
+                }
+            },
+            {
+                "start": "00:00:08.737",
+                "end": "00:00:10.368",
+                "annotations": {
+                    "crossedArms": true,
+                    "feedbackFired": true,
+                    "feedbackMessage": "Don't cross your arms. Keep an open posture"
+                }
+            },
+            {
+                "start": "00:00:12.939",
+                "end": "00:00:13.079",
+                "annotations": {
+                    "noHands": true,
+                    "feedbackFired": true,
+                    "feedbackMessage": "Don't hide your hands. Keep an open posture"
+                }
+            },
+            {
+                "start": "00:00:13.017",
+                "end": "00:00:13.403",
+                "annotations": {
+                    "isTurningSide": true,
+                    "feedbackFired": false,
+                    "feedbackMessage": "Face forward"
+                }
+            },
+            {
+                "start": "00:00:13.571",
+                "end": "00:00:15.346",
+                "annotations": {
+                    "isTurningSide": true,
+                    "feedbackFired": false,
+                    "feedbackMessage": "Face forward"
+                }
+            },
+            {
+                "start": "00:00:15.399",
+                "end": "00:00:15.755",
+                "annotations": {
+                    "isTurningSide": true,
+                    "feedbackFired": false,
+                    "feedbackMessage": "Face forward"
+                }
+            },
+            {
+                "start": "00:00:13.452",
+                "end": "00:00:15.893",
+                "annotations": {
+                    "noHands": true,
+                    "feedbackFired": true,
+                    "feedbackMessage": "Don't hide your hands. Keep an open posture"
+                }
+            },
+            {
+                "start": "00:00:18.812",
+                "end": "00:00:19.930",
+                "annotations": {
+                    "handCloseToFace": true,
+                    "feedbackFired": true,
+                    "feedbackMessage": "Lower your hands"
+                }
+            },
+            {
+                "start": "00:00:22.108",
+                "end": "00:00:23.407",
+                "annotations": {
+                    "handCloseToFace": true,
+                    "feedbackFired": true,
+                    "feedbackMessage": "Lower your hands"
+                }
+            },
+            {
+                "start": "00:00:27.299",
+                "end": "00:00:30.240",
+                "annotations": {
+                    "crossedArms": true,
+                    "feedbackFired": true,
+                    "feedbackMessage": "Don't cross your arms. Keep an open posture"
+                }
+            },
+            {
+                "start": "00:00:27.341",
+                "end": "00:00:30.715",
+                "annotations": {
+                    "noHands": true,
+                    "feedbackFired": true,
+                    "feedbackMessage": "Don't hide your hands. Keep an open posture"
+                }
+            },
+            {
+                "start": "00:00:32.274",
+                "end": "00:00:32.532",
+                "annotations": {
+                    "noHands": true,
+                    "feedbackFired": true,
+                    "feedbackMessage": "Don't hide your hands. Keep an open posture"
+                }
+            },
+            {
+                "start": "00:00:32.141",
+                "end": "00:00:32.874",
+                "annotations": {
+                    "isTurningSide": true,
+                    "feedbackFired": true,
+                    "feedbackMessage": "Face forward"
+                }
+            },
+            {
+                "start": "00:00:33.090",
+                "end": "00:00:33.874",
+                "annotations": {
+                    "isTurningSide": true,
+                    "feedbackFired": false,
+                    "feedbackMessage": "Face forward"
+                }
+            },
+            {
+                "start": "00:00:33.941",
+                "end": "00:00:34.348",
+                "annotations": {
+                    "isTurningSide": true,
+                    "feedbackFired": false,
+                    "feedbackMessage": "Face forward"
+                }
+            },
+            {
+                "start": "00:00:34.524",
+                "end": "00:00:35.082",
+                "annotations": {
+                    "isTurningSide": true,
+                    "feedbackFired": false,
+                    "feedbackMessage": "Face forward"
+                }
+            },
+            {
+                "start": "00:00:32.874",
+                "end": "00:00:35.082",
+                "annotations": {
+                    "noHands": true,
+                    "feedbackFired": true,
+                    "feedbackMessage": "Don't hide your hands. Keep an open posture"
+                }
+            },
+            {
+                "start": "00:00:36.058",
+                "end": "00:00:36.352",
+                "annotations": {
+                    "noHands": true,
+                    "feedbackFired": true,
+                    "feedbackMessage": "Don't hide your hands. Keep an open posture"
+                }
+            }
+        ]
+    },
+    {
+        "RecordingID": "1",
+        "Intervals": [
+            {
+                "start": "00:00:26.000",
+                "end": "00:00:27.000",
+                "annotations": {
+                    "feedbackFired": true,
+                    "feedbackMessage": "Intro"
+                }
+            },
+            {
+                "start": "00:02:54.000",
+                "end": "00:00:55.000",
+                "annotations": {
+                    "feedbackFired": true,
+                    "feedbackMessage": "Funny Moment"
+                }
+            },
+            {
+                "start": "00:08:10.000",
+                "end": "00:08:11.000",
+                "annotations": {
+                    "feedbackFired": true,
+                    "feedbackMessage": "End"
+                }
+            }
+        ]
+    },
+    {
+        "RecordingID": "4",
+        "Intervals": [
+            {
+                "start": "00:00:12.000",
+                "end": "00:00:51.000",
+                "annotations": {
+                    "feedbackFired": true,
+                    "feedbackMessage": "Gliederung"
+                }
+            },
+            {
+                "start": "00:00:51.000",
+                "end": "00:02:15.000",
+                "annotations": {
+                    "feedbackFired": true,
+                    "feedbackMessage": "Einführung in das Thema"
+                }
+            },
+            {
+                "start": "00:02:15.000",
+                "end": "00:02:24.000",
+                "annotations": {
+                    "feedbackFired": true,
+                    "feedbackMessage": "Fragestellung"
+                }
+            }
+        ]
+    }
+]

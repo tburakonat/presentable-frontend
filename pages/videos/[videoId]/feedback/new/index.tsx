@@ -5,6 +5,9 @@ import { Tabs, Tab, Box } from "@mui/material";
 import { GetStaticPathsResult, GetStaticPropsContext } from "next";
 import { useState } from "react";
 
+import fs from 'fs';
+import path from 'path';
+
 export default function CreateVideoFeedbackPage(props: {
 	video: Video;
 	events: Event | null;
@@ -27,7 +30,6 @@ export default function CreateVideoFeedbackPage(props: {
 	const handleTimestampClick = (time: number) => {
 		if (videoRef.current) {
 			videoRef.current.currentTime = time;
-			videoRef.current.pause();
 		}
 	};
 
@@ -104,10 +106,12 @@ export default function CreateVideoFeedbackPage(props: {
 }
 
 export async function getStaticPaths(): Promise<GetStaticPathsResult> {
-	const res = await fetch("http://localhost:8080/videos");
-	const data: Video[] = await res.json();
+	const dataDirectory = path.join(process.cwd(), 'data');
+  	const filePath = path.join(dataDirectory, 'videos.json');
+  	const fileContents = fs.readFileSync(filePath, 'utf-8');
+  	const videos: Video[] = JSON.parse(fileContents);
 
-	const paths = data.map(video => ({
+	const paths = videos.map(video => ({
 		params: { videoId: video.id.toString() },
 	}));
 
@@ -117,17 +121,21 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult> {
 export async function getStaticProps(context: GetStaticPropsContext) {
 	const { videoId } = context.params!;
 
-	const res = await fetch("http://localhost:8080/videos");
-	const data: Video[] = await res.json();
-	const video = data.find(v => v.id === videoId);
+	const dataDirectory = path.join(process.cwd(), 'data');
+  	const videosFilePath = path.join(dataDirectory, 'videos.json');
+  	const videoFileContents = fs.readFileSync(videosFilePath, 'utf-8');
+  	const videos: Video[] = JSON.parse(videoFileContents);
+	const video = videos.find(v => v.id === videoId);
 
-	const res2 = await fetch("http://localhost:8080/events");
-	const data2: Event[] = await res2.json();
-	const events = data2.find(event => event.RecordingID === videoId);
+	const eventsFilePath = path.join(dataDirectory, 'events.json');
+  	const eventsFileContent = fs.readFileSync(eventsFilePath, 'utf-8');
+	const allEvents: Event[] = JSON.parse(eventsFileContent);
+	const events = allEvents.find(event => event.RecordingID === videoId);
 
-	const res3 = await fetch("http://localhost:8080/transcripts");
-	const data3: Transcript[] = await res3.json();
-	const transcript = data3.find(event => event.RecordingID === videoId);
+	const transcriptsFilePaths = path.join(dataDirectory, 'transcripts.json');
+  	const transcriptsContent = fs.readFileSync(transcriptsFilePaths, 'utf-8');
+	const transcripts: Event[] = JSON.parse(transcriptsContent);
+	const transcript = transcripts.find(event => event.RecordingID === videoId);
 
 	return {
 		props: {
