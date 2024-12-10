@@ -1,0 +1,37 @@
+.menubar {
+    display: flex;
+	background-color: #333;
+	padding: 10px;
+	position: sticky;
+	top: 0;
+	z-index: 10;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.menubar button {
+	background: none;
+	color: white;
+	border: none;
+	font-size: 16px;
+	margin-right: 10px;
+	cursor: pointer;
+	width: 30px;
+	height: 30px;
+}
+
+.menubar button:hover {
+	color: #ffa500;
+}
+
+.menubar button:disabled {
+	cursor: not-allowed;
+	color: gray;
+}
+
+.template {
+	border: 1px solid rgba(255, 255, 255, 0.25);
+	border-radius: 3px;
+	padding: 3px 0 3px 3px;
+	margin: 0 3px;
+}

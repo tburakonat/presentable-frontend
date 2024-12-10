@@ -1,0 +1,15 @@
+.feedbackContent * {
+    margin-bottom: 0.5rem;
+}
+
+.feedbackContent h1 {
+    font-size: 1.2rem;
+    font-weight: bolder;
+    margin-bottom: 0.7rem;
+}
+
+.feedbackContent h2 {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+} 

@@ -1,0 +1,6 @@
+.timestamp {
+    position: relative;
+    display: inline-block;
+    color: blue;
+    cursor: pointer;
+}
