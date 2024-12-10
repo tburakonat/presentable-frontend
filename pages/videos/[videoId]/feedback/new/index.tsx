@@ -62,7 +62,7 @@ export default function CreateVideoFeedbackPage(props: {
 
 				{/* Right Column: Tabs for Description, Transcription, Events */}
 				<div>
-					<Tabs onChange={(_, val) => setValue(val)}>
+					<Tabs onChange={(_, val) => setValue(val)} value={value}>
 						<Tab
 							label="Description"
 							value={0}

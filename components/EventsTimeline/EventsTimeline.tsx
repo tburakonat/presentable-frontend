@@ -42,9 +42,13 @@ const EventsTimeline = (props: IEventsTimelineProps) => {
 						(start / convertTimeToSeconds(props.videoDuration)) *
 						100;
 					return (
-						<Tooltip tooltipComponent={interval.annotations.feedbackMessage}>
+						<Tooltip
+							key={interval.start}
+							tooltipComponent={
+								interval.annotations.feedbackMessage
+							}
+						>
 							<div
-								key={interval.start}
 								onClick={() => handleEventClick(interval.start)}
 								className="absolute w-3 h-3 bg-white rounded-full border-2 border-black cursor-pointer"
 								style={{

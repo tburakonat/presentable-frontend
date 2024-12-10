@@ -73,7 +73,7 @@ export default function VideoFeedbackPage(props: IVideoFeedbackPageProps) {
 
 				{/* Right Column: Description, Transcription, Events, Comments */}
 				<div>
-					<Tabs onChange={(_, val) => setValue(val)}>
+					<Tabs onChange={(_, val) => setValue(val)} value={value}>
 						<Tab
 							label="Description"
 							value={0}

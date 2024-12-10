@@ -69,7 +69,10 @@ export default function VideoDetailsPage(props: {
 
 					{/* Right Column: Description, Transcription, Events */}
 					<div>
-						<Tabs onChange={(_, val) => setValue(val)}>
+						<Tabs
+							onChange={(_, val) => setValue(val)}
+							value={value}
+						>
 							<Tab
 								label="Description"
 								value={0}

@@ -7,15 +7,18 @@ interface EventProps {
 }
 
 const EventList = (props: EventProps) => {
+	const convertTimeToSeconds = (time: string) => {
+		const [hours, minutes, seconds] = time.split(":").map(Number);
+		const [sec, millisec] = seconds.toString().split(".").map(Number);
+		return hours * 3600 + minutes * 60 + sec + (millisec || 0) / 1000;
+	};
+
 	if (!props.event) {
 		return <div>No events found</div>;
 	}
 
 	const handleClick = (startInterval: string) => {
-		const [hours, minutes, seconds] = startInterval.split(":").map(Number);
-		const [sec, millisec] = seconds.toString().split(".").map(Number);
-		const time = hours * 3600 + minutes * 60 + sec + millisec / 1000;
-
+		const time = convertTimeToSeconds(startInterval);
 		props.onEventClick(time);
 	};
 
@@ -28,7 +31,7 @@ const EventList = (props: EventProps) => {
 				
 				return (
 					<div
-						key={intervalIndex}
+						key={interval.start}
 						className="p-4 mb-4 border border-gray-200 rounded-md cursor-pointer dark:bg-slate-800"
 						onClick={() => handleClick(interval.start)}
 					>

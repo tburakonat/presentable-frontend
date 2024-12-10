@@ -99,7 +99,7 @@ export default function Menubar({ editor }: IMenubarProps) {
 	const deleteTemplate = (templateId: number) => {
 		const saveTemplate = confirm("Are you sure you want to delete this template?");
 
-		if (!saveTemplate) {
+		if (saveTemplate) {
 			setTemplates(templates.filter(t => t.id !== templateId));
 		}
 
