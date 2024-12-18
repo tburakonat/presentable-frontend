@@ -7,13 +7,14 @@ import {
 	VideoDetails,
 } from "@/components";
 import { useVideoTimestamp } from "@/hooks";
-import { Event, Feedback, Transcript, Video } from "@/types";
+import { Event, Feedback, Transcript, Video, VideoTab } from "@/types";
 import { Box, Tab, Tabs } from "@mui/material";
 import { GetStaticPropsContext } from "next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
+import Link from "next/link";
 
 interface IVideoFeedbackPageProps {
 	video: Video;
@@ -24,7 +25,7 @@ interface IVideoFeedbackPageProps {
 
 export default function VideoFeedbackPage(props: IVideoFeedbackPageProps) {
 	const videoRef = useVideoTimestamp();
-	const [value, setValue] = useState(0);
+	const [value, setValue] = useState<VideoTab>(VideoTab.Description);
 	const [videoTime, setVideoTime] = useState(0);
 
 	const handleTimeUpdate = () => {
@@ -79,41 +80,51 @@ export default function VideoFeedbackPage(props: IVideoFeedbackPageProps) {
 					<Tabs onChange={(_, val) => setValue(val)} value={value}>
 						<Tab
 							label="Description"
-							value={0}
 							className="dark:text-white"
+							value={VideoTab.Description}
+							href={VideoTab.Description}
+							LinkComponent={Link}
 						/>
 						<Tab
 							label="Events"
-							value={1}
 							className="dark:text-white"
+							value={VideoTab.Events}
+							href={VideoTab.Events}
+							LinkComponent={Link}
 						/>
 						<Tab
 							label="Transcription"
-							value={2}
 							className="dark:text-white"
+							value={VideoTab.Transcription}
+							href={VideoTab.Transcription}
+							LinkComponent={Link}
 						/>
 						<Tab
 							label="Comments"
-							value={3}
 							className="dark:text-white"
+							value={VideoTab.Comments}
+							href={VideoTab.Comments}
+							LinkComponent={Link}
 						/>
 					</Tabs>
 					<Box p={2} className="overflow-y-auto max-h-[100vh]">
-						{value === 0 && <VideoDetails video={props.video} />}
-						{value === 1 && (
+						{value === VideoTab.Description && (
+							<VideoDetails video={props.video} />
+						)}
+						{value === VideoTab.Events && (
 							<EventList
 								event={props.events}
 								onEventClick={handleTimestampClick}
 							/>
 						)}
-						{value === 2 && (
+						{value === VideoTab.Transcription && (
 							<TranscriptList
 								transcript={props.transcript}
 								onTranscriptClick={handleTimestampClick}
 								videoTime={videoTime}
 							/>
 						)}
-						{value === 3 && (
+						{value === VideoTab.Comments && (
 							<CommentSection
 								feedback={props.feedback}
 								onTimestampClick={handleTimestampClick}
@@ -127,10 +138,10 @@ export default function VideoFeedbackPage(props: IVideoFeedbackPageProps) {
 }
 
 export const getStaticPaths = async () => {
-	const dataDirectory = path.join(process.cwd(), 'data');
-  	const filePath = path.join(dataDirectory, 'videos.json');
-  	const fileContents = fs.readFileSync(filePath, 'utf-8');
-  	const videos: Video[] = JSON.parse(fileContents);
+	const dataDirectory = path.join(process.cwd(), "data");
+	const filePath = path.join(dataDirectory, "videos.json");
+	const fileContents = fs.readFileSync(filePath, "utf-8");
+	const videos: Video[] = JSON.parse(fileContents);
 
 	const paths = videos.flatMap(video => {
 		return video.feedback.map(fb => {
@@ -146,21 +157,21 @@ export const getStaticPaths = async () => {
 export const getStaticProps = async (context: GetStaticPropsContext) => {
 	const { videoId, feedbackId } = context.params!;
 
-	const dataDirectory = path.join(process.cwd(), 'data');
-  	const videosFilePath = path.join(dataDirectory, 'videos.json');
-  	const videoFileContents = fs.readFileSync(videosFilePath, 'utf-8');
-  	const videos: Video[] = JSON.parse(videoFileContents);
+	const dataDirectory = path.join(process.cwd(), "data");
+	const videosFilePath = path.join(dataDirectory, "videos.json");
+	const videoFileContents = fs.readFileSync(videosFilePath, "utf-8");
+	const videos: Video[] = JSON.parse(videoFileContents);
 	const video = videos.find(v => v.id === videoId);
-	
+
 	const feedback = video?.feedback.find(fb => fb.id === feedbackId);
 
-	const eventsFilePath = path.join(dataDirectory, 'events.json');
-  	const eventsFileContent = fs.readFileSync(eventsFilePath, 'utf-8');
+	const eventsFilePath = path.join(dataDirectory, "events.json");
+	const eventsFileContent = fs.readFileSync(eventsFilePath, "utf-8");
 	const allEvents: Event[] = JSON.parse(eventsFileContent);
 	const events = allEvents.find(event => event.RecordingID === videoId);
 
-	const transcriptsFilePaths = path.join(dataDirectory, 'transcripts.json');
-  	const transcriptsContent = fs.readFileSync(transcriptsFilePaths, 'utf-8');
+	const transcriptsFilePaths = path.join(dataDirectory, "transcripts.json");
+	const transcriptsContent = fs.readFileSync(transcriptsFilePaths, "utf-8");
 	const transcripts: Event[] = JSON.parse(transcriptsContent);
 	const transcript = transcripts.find(event => event.RecordingID === videoId);
 

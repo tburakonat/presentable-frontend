@@ -1,12 +1,19 @@
-import { Editor, EventList, EventsTimeline, TranscriptList, VideoDetails } from "@/components";
+import {
+	Editor,
+	EventList,
+	EventsTimeline,
+	TranscriptList,
+	VideoDetails,
+} from "@/components";
 import { useVideoTimestamp } from "@/hooks";
-import { Event, Transcript, Video } from "@/types";
+import { Event, Transcript, Video, VideoTab } from "@/types";
 import { Tabs, Tab, Box } from "@mui/material";
 import { GetStaticPathsResult, GetStaticPropsContext } from "next";
 import { useState } from "react";
 
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
+import Link from "next/link";
 
 export default function CreateVideoFeedbackPage(props: {
 	video: Video;
@@ -14,7 +21,7 @@ export default function CreateVideoFeedbackPage(props: {
 	transcript: Transcript | null;
 }) {
 	const videoRef = useVideoTimestamp();
-	const [value, setValue] = useState(0);
+	const [value, setValue] = useState(VideoTab.Description);
 	const [videoTime, setVideoTime] = useState(0);
 
 	const handleTimeUpdate = () => {
@@ -48,10 +55,10 @@ export default function CreateVideoFeedbackPage(props: {
 						Your browser does not support the video tag.
 					</video>
 					<EventsTimeline
-							events={props.events}
-							onEventClick={handleTimestampClick}
-							videoDuration={props.video.videoDuration}
-						/>
+						events={props.events}
+						onEventClick={handleTimestampClick}
+						videoDuration={props.video.videoDuration}
+					/>
 					<Editor />
 					<button
 						type="submit"
@@ -67,29 +74,37 @@ export default function CreateVideoFeedbackPage(props: {
 					<Tabs onChange={(_, val) => setValue(val)} value={value}>
 						<Tab
 							label="Description"
-							value={0}
 							className="dark:text-white"
+							value={VideoTab.Description}
+							href={VideoTab.Description}
+							LinkComponent={Link}
 						/>
 						<Tab
 							label="Events"
-							value={1}
 							className="dark:text-white"
+							value={VideoTab.Events}
+							href={VideoTab.Events}
+							LinkComponent={Link}
 						/>
 						<Tab
 							label="Transcription"
-							value={2}
 							className="dark:text-white"
+							value={VideoTab.Transcription}
+							href={VideoTab.Transcription}
+							LinkComponent={Link}
 						/>
 					</Tabs>
 					<Box p={2} className="overflow-y-auto max-h-[100vh]">
-						{value === 0 && <VideoDetails video={props.video} />}
-						{value === 1 && (
+						{value === VideoTab.Description && (
+							<VideoDetails video={props.video} />
+						)}
+						{value === VideoTab.Events && (
 							<EventList
 								event={props.events}
 								onEventClick={handleTimestampClick}
 							/>
 						)}
-						{value === 2 && (
+						{value === VideoTab.Transcription && (
 							<TranscriptList
 								transcript={props.transcript}
 								onTranscriptClick={handleTimestampClick}
@@ -106,10 +121,10 @@ export default function CreateVideoFeedbackPage(props: {
 }
 
 export async function getStaticPaths(): Promise<GetStaticPathsResult> {
-	const dataDirectory = path.join(process.cwd(), 'data');
-  	const filePath = path.join(dataDirectory, 'videos.json');
-  	const fileContents = fs.readFileSync(filePath, 'utf-8');
-  	const videos: Video[] = JSON.parse(fileContents);
+	const dataDirectory = path.join(process.cwd(), "data");
+	const filePath = path.join(dataDirectory, "videos.json");
+	const fileContents = fs.readFileSync(filePath, "utf-8");
+	const videos: Video[] = JSON.parse(fileContents);
 
 	const paths = videos.map(video => ({
 		params: { videoId: video.id.toString() },
@@ -121,19 +136,19 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult> {
 export async function getStaticProps(context: GetStaticPropsContext) {
 	const { videoId } = context.params!;
 
-	const dataDirectory = path.join(process.cwd(), 'data');
-  	const videosFilePath = path.join(dataDirectory, 'videos.json');
-  	const videoFileContents = fs.readFileSync(videosFilePath, 'utf-8');
-  	const videos: Video[] = JSON.parse(videoFileContents);
+	const dataDirectory = path.join(process.cwd(), "data");
+	const videosFilePath = path.join(dataDirectory, "videos.json");
+	const videoFileContents = fs.readFileSync(videosFilePath, "utf-8");
+	const videos: Video[] = JSON.parse(videoFileContents);
 	const video = videos.find(v => v.id === videoId);
 
-	const eventsFilePath = path.join(dataDirectory, 'events.json');
-  	const eventsFileContent = fs.readFileSync(eventsFilePath, 'utf-8');
+	const eventsFilePath = path.join(dataDirectory, "events.json");
+	const eventsFileContent = fs.readFileSync(eventsFilePath, "utf-8");
 	const allEvents: Event[] = JSON.parse(eventsFileContent);
 	const events = allEvents.find(event => event.RecordingID === videoId);
 
-	const transcriptsFilePaths = path.join(dataDirectory, 'transcripts.json');
-  	const transcriptsContent = fs.readFileSync(transcriptsFilePaths, 'utf-8');
+	const transcriptsFilePaths = path.join(dataDirectory, "transcripts.json");
+	const transcriptsContent = fs.readFileSync(transcriptsFilePaths, "utf-8");
 	const transcripts: Event[] = JSON.parse(transcriptsContent);
 	const transcript = transcripts.find(event => event.RecordingID === videoId);
 

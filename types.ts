@@ -71,3 +71,10 @@ export type Template = {
 export enum StorageKey {
 	Templates = "presentable-feedback-editor-templates",
 }
+
+export enum VideoTab {
+    Description = "#description",
+    Events = "#events",
+    Transcription = "#transcription",
+    Comments = "#comments",
+}

@@ -6,7 +6,7 @@ import {
 	TranscriptList,
 	EventsTimeline,
 } from "@/components";
-import { Event, Transcript, Video } from "@/types";
+import { Event, Transcript, Video, VideoTab } from "@/types";
 import { GetStaticPathsResult, GetStaticPropsContext } from "next";
 import { useVideoTimestamp } from "@/hooks";
 import { Tab, Tabs } from "@mui/material";
@@ -14,6 +14,7 @@ import { useState } from "react";
 
 import fs from 'fs';
 import path from 'path';
+import Link from "next/link";
 
 export default function VideoDetailsPage(props: {
 	video: Video;
@@ -21,7 +22,7 @@ export default function VideoDetailsPage(props: {
 	transcript: Transcript | null;
 }) {
 	const videoRef = useVideoTimestamp();
-	const [value, setValue] = useState(0);
+	const [value, setValue] = useState(VideoTab.Description);
 	const [videoTime, setVideoTime] = useState(0);
 
 	const handleTimeUpdate = () => {
@@ -78,31 +79,37 @@ export default function VideoDetailsPage(props: {
 						>
 							<Tab
 								label="Description"
-								value={0}
 								className="dark:text-white"
+								value={VideoTab.Description}
+								href={VideoTab.Description}
+								LinkComponent={Link}
 							/>
 							<Tab
 								label="Events"
-								value={1}
 								className="dark:text-white"
+								value={VideoTab.Events}
+								href={VideoTab.Events}
+								LinkComponent={Link}
 							/>
 							<Tab
 								label="Transcription"
-								value={2}
 								className="dark:text-white"
+								value={VideoTab.Transcription}
+								href={VideoTab.Transcription}
+								LinkComponent={Link}
 							/>
 						</Tabs>
 						<div className="overflow-y-auto max-h-[100vh] dark:bg-slate-800 rounded-lg p-4">
-							{value === 0 && (
+							{value === VideoTab.Description && (
 								<VideoDetails video={props.video} />
 							)}
-							{value === 1 && (
+							{value === VideoTab.Events && (
 								<EventList
 									event={props.events}
 									onEventClick={handleTimestampClick}
 								/>
 							)}
-							{value === 2 && (
+							{value === VideoTab.Transcription && (
 								<TranscriptList
 									transcript={props.transcript}
 									onTranscriptClick={handleTimestampClick}
