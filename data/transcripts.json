@@ -1,112 +1,197 @@
 [
-    {
-        "RecordingID": "4",
-        "Intervals": [
-            {
-                "start": "3",
-                "end": "32",
-                "text": "Sehr geehrte Damen und Herren, heute möchten wir Ihnen unsere Hausarbeit mit dem Thema 'Stress im Studium - Stellen Nebenbeschäftigungen eine zusätzliche Belastung dar' vorstellen. Wir fangen an, indem wir Sie in das Thema einführen werden und unsere Fragestellung und wie wir auf diese gekommen sind erklären. Daraufhin werden wir uns aktuelle Theorie und Forschung zu diesem Thema betrachten, indem wir erst Finanzierung eines Studiums und Kosten eines Studiums zusammenfassen und dann auf Stress und neben Beschäftigung und Studium eingehen.",
-                "sentences": [
-                    {
-                        "start": "3",
-                        "end": "11",
-                        "text": "Sehr geehrte Damen und Herren, heute möchten wir Ihnen unsere Hausarbeit mit dem Thema 'Stress im Studium - Stellen Nebenbeschäftigungen eine zusätzliche Belastung dar' vorstellen."
-                    },
-                    {
-                        "start": "12",
-                        "end": "19",
-                        "text": "Wir fangen an, indem wir Sie in das Thema einführen werden und unsere Fragestellung und wie wir auf diese gekommen sind erklären."
-                    },
-                    {
-                        "start": "20",
-                        "end": "32",
-                        "text": "Daraufhin werden wir uns aktuelle Theorie und Forschung zu diesem Thema betrachten, indem wir erst Finanzierung eines Studiums und Kosten eines Studiums zusammenfassen und dann auf Stress und neben Beschäftigung und Studium eingehen."
-                    }
-                ]
-            },
-            {
-                "start": "33",
-                "end": "57",
-                "text": "Danach werden wir unsere Hypothesen aus dieser Forschung formulieren und unsere Methoden erklären, was und wie wir diese Erhebung der Daten ausführen wollten. Danach stellen wir die Ergebnisse vor und versuchen diese in der Diskussion in die bisherige Forschung einzuordnen und einen möglichen Ausblick zu geben. Wenn Sie diese Grafik betrachten, sehen Sie direkt, dass Studierende heutzutage ein sehr hohes Stresslevel empfinden.",
-                "sentences": [
-                    {
-                        "start": "33",
-                        "end": "42",
-                        "text": "Danach werden wir unsere Hypothesen aus dieser Forschung formulieren und unsere Methoden erklären, was und wie wir diese Erhebung der Daten ausführen wollten."
-                    },
-                    {
-                        "start": "43",
-                        "end": "51",
-                        "text": "Danach stellen wir die Ergebnisse vor und versuchen diese in der Diskussion in die bisherige Forschung einzuordnen und einen möglichen Ausblick zu geben."
-                    },
-                    {
-                        "start": "52",
-                        "end": "57",
-                        "text": "Wenn Sie diese Grafik betrachten, sehen Sie direkt, dass Studierende heutzutage ein sehr hohes Stresslevel empfinden."
-                    }
-                ]
-            },
-            {
-                "start": "58",
-                "end": "82",
-                "text": "So fand die Studie von Herbst et al. in Zusammenarbeit mit dem Bundesverband der AOK mit 53 Prozent der Studierenden ein hohes Stresslevel, die ein hohes Stresslevel angaben und 41,6 Prozent, die ein mittleres Stresslevel angaben. Dies heißt im Umkehrschluss, dass nur 5 Prozent der Studierenden ein niedriges Stresslevel empfinden, was natürlich sehr erschreckende Ergebnisse sind.",
-                "sentences": [
-                    {
-                        "start": "58",
-                        "end": "73",
-                        "text": "So fand die Studie von Herbst et al. in Zusammenarbeit mit dem Bundesverband der AOK mit 53 Prozent der Studierenden ein hohes Stresslevel, die ein hohes Stresslevel angaben und 41,6 Prozent, die ein mittleres Stresslevel angaben."
-                    },
-                    {
-                        "start": "74",
-                        "end": "82",
-                        "text": "Dies heißt im Umkehrschluss, dass nur 5 Prozent der Studierenden ein niedriges Stresslevel empfinden, was natürlich sehr erschreckende Ergebnisse sind."
-                    }
-                ]
-            },
-            {
-                "start": "83",
-                "end": "111",
-                "text": "Des Weiteren können wir sehen, dass während der Corona-Pandemie die Erwerbssituation von vielen Studierenden schwieriger geworden ist. Durch viele Nebenjobs, die von Studis ausgeführt werden, wie in der Gastronomiebranche, die durch Corona und der Pandemie weggefallen sind, ist diese Erwerbssituation viel schwieriger geworden, was diese Studierenden eine zusätzliche Belastung darstellt. Daran lässt sich erkennen, wie ein Studium auch finanziert wird, wie wir jetzt an den drei Säulen sehen.",
-                "sentences": [
-                    {
-                        "start": "83",
-                        "end": "90",
-                        "text": "Des Weiteren können wir sehen, dass während der Corona-Pandemie die Erwerbssituation von vielen Studierenden schwieriger geworden ist."
-                    },
-                    {
-                        "start": "91",
-                        "end": "105",
-                        "text": "Durch viele Nebenjobs, die von Studis ausgeführt werden, wie in der Gastronomiebranche, die durch Corona und der Pandemie weggefallen sind, ist diese Erwerbssituation viel schwieriger geworden, was diese Studierenden eine zusätzliche Belastung darstellt."
-                    },
-                    {
-                        "start": "106",
-                        "end": "111",
-                        "text": "Daran lässt sich erkennen, wie ein Studium auch finanziert wird, wie wir jetzt an den drei Säulen sehen."
-                    }
-                ]
-            },
-            {
-                "start": "111",
-                "end": "144",
-                "text": "Es ist einmal, dass wir einmal die familiäre Unterstützung haben, das heißt zum Beispiel, dass die Eltern ein Geld geben oder die Großeltern. Als zweite Stelle kommt dann schon die Nebenbeschäftigung oder auch staatliche Unterstützung, zum Beispiel in Form von BAföG oder Stipendien. Daran können wir sehen, dass die Nebenbeschäftigung ein wichtiger Pfeiler der Finanzierung ist, weswegen wir uns die Frage gestellt haben, ob es einen Unterschied zwischen Studierenden gibt, die einen Nebenjob ausüben und die keinen Nebenjob ausüben, hinsichtlich ihres Stressempfindens.",
-                "sentences": [
-                    {
-                        "start": "111",
-                        "end": "120",
-                        "text": "Es ist einmal, dass wir einmal die familiäre Unterstützung haben, das heißt zum Beispiel, dass die Eltern ein Geld geben oder die Großeltern."
-                    },
-                    {
-                        "start": "121",
-                        "end": "129",
-                        "text": "Als zweite Stelle kommt dann schon die Nebenbeschäftigung oder auch staatliche Unterstützung, zum Beispiel in Form von BAföG oder Stipendien."
-                    },
-                    {
-                        "start": "130",
-                        "end": "144",
-                        "text": "Daran können wir sehen, dass die Nebenbeschäftigung ein wichtiger Pfeiler der Finanzierung ist, weswegen wir uns die Frage gestellt haben, ob es einen Unterschied zwischen Studierenden gibt, die einen Nebenjob ausüben und die keinen Nebenjob ausüben, hinsichtlich ihres Stressempfindens."
-                    }
-                ]
-            }
-        ]
-    }
+	{
+		"RecordingID": "4",
+		"Intervals": [
+			{
+				"start": "3",
+				"end": "32",
+				"text": "Sehr geehrte Damen und Herren, heute möchten wir Ihnen unsere Hausarbeit mit dem Thema 'Stress im Studium - Stellen Nebenbeschäftigungen eine zusätzliche Belastung dar' vorstellen. Wir fangen an, indem wir Sie in das Thema einführen werden und unsere Fragestellung und wie wir auf diese gekommen sind erklären. Daraufhin werden wir uns aktuelle Theorie und Forschung zu diesem Thema betrachten, indem wir erst Finanzierung eines Studiums und Kosten eines Studiums zusammenfassen und dann auf Stress und neben Beschäftigung und Studium eingehen.",
+				"sentences": [
+					{
+						"start": "3",
+						"end": "4",
+						"text": "Sehr geehrte Damen und Herren,"
+					},
+					{
+						"start": "4",
+						"end": "8",
+						"text": "heute möchten wir Ihnen unsere Hausarbeit mit dem Thema"
+					},
+					{
+						"start": "8",
+						"end": "11",
+						"text": "'Stress im Studium - Stellen Nebenbeschäftigungen eine zusätzliche Belastung dar' vorstellen."
+					},
+					{
+						"start": "11",
+						"end": "15",
+						"text": "Wir fangen an, indem wir Sie in das Thema einführen werden"
+					},
+					{
+						"start": "15",
+						"end": "19",
+						"text": "und unsere Fragestellung und wie wir auf diese gekommen sind erklären."
+					},
+					{
+						"start": "19",
+						"end": "24",
+						"text": "Daraufhin werden wir uns aktuelle Theorie und Forschung zu diesem Thema betrachten,"
+					},
+					{
+						"start": "24",
+						"end": "29",
+						"text": "indem wir erst Finanzierung eines Studiums und Kosten eines Studiums zusammenfassen"
+					},
+					{
+						"start": "29",
+						"end": "32",
+						"text": "und dann auf Stress und neben Beschäftigung im Studium eingehen."
+					}
+				]
+			},
+			{
+				"start": "33",
+				"end": "57",
+				"text": "Danach werden wir unsere Hypothesen aus dieser Forschung formulieren und unsere Methoden erklären, was und wie wir diese Erhebung der Daten ausführen wollten. Danach stellen wir die Ergebnisse vor und versuchen diese in der Diskussion in die bisherige Forschung einzuordnen und einen möglichen Ausblick zu geben. Wenn Sie diese Grafik betrachten, sehen Sie direkt, dass Studierende heutzutage ein sehr hohes Stresslevel empfinden.",
+				"sentences": [
+					{
+						"start": "33",
+						"end": "37",
+						"text": "Danach werden wir unsere Hypothesen aus dieser Forschung formulieren"
+					},
+					{
+						"start": "37",
+						"end": "42",
+						"text": "und unsere Methoden erklären, was und wie wir diese Erhebung der Daten ausführen wollten."
+					},
+					{
+						"start": "43",
+						"end": "47",
+						"text": "Danach stellen wir die Ergebnisse vor und versuchen diese in der Diskussion"
+					},
+					{
+						"start": "47",
+						"end": "51",
+						"text": "in die bisherige Forschung einzuordnen und einen möglichen Ausblick zu geben."
+					},
+					{
+						"start": "52",
+						"end": "57",
+						"text": "Wenn Sie diese Grafik betrachten, sehen Sie direkt, dass Studierende heutzutage ein sehr hohes Stresslevel empfinden."
+					}
+				]
+			},
+			{
+				"start": "58",
+				"end": "82",
+				"text": "So fand die Studie von Herbst et al. in Zusammenarbeit mit dem Bundesverband der AOK mit 53 Prozent der Studierenden ein hohes Stresslevel, die ein hohes Stresslevel angaben und 41,6 Prozent, die ein mittleres Stresslevel angaben. Dies heißt im Umkehrschluss, dass nur 5 Prozent der Studierenden ein niedriges Stresslevel empfinden, was natürlich sehr erschreckende Ergebnisse sind.",
+				"sentences": [
+					{
+						"start": "58",
+						"end": "63",
+						"text": "So fand die Studie von Herbst et al. in Zusammenarbeit mit dem Bundesverband der AOK"
+					},
+					{
+						"start": "63",
+						"end": "70",
+						"text": "mit 53 Prozent der Studierenden ein hohes Stresslevel, die ein hohes Stresslevel angaben"
+					},
+					{
+						"start": "70",
+						"end": "73",
+						"text": "und 41,6 Prozent, die ein mittleres Stresslevel angaben."
+					},
+					{
+						"start": "74",
+						"end": "77",
+						"text": "Dies heißt im Umkehrschluss, dass nur 5 Prozent der Studierenden"
+					},
+					{
+						"start": "77",
+						"end": "82",
+						"text": "ein niedriges Stresslevel empfinden, was natürlich sehr erschreckende Ergebnisse sind."
+					}
+				]
+			},
+			{
+				"start": "83",
+				"end": "111",
+				"text": "Des Weiteren können wir sehen, dass während der Corona-Pandemie die Erwerbssituation von vielen Studierenden schwieriger geworden ist. Durch viele Nebenjobs, die von Studis ausgeführt werden, wie in der Gastronomiebranche, die durch Corona und der Pandemie weggefallen sind, ist diese Erwerbssituation viel schwieriger geworden, was diese Studierenden eine zusätzliche Belastung darstellt. Daran lässt sich erkennen, wie ein Studium auch finanziert wird, wie wir jetzt an den drei Säulen sehen.",
+				"sentences": [
+					{
+						"start": "83",
+						"end": "86",
+						"text": "Des Weiteren können wir sehen, dass während der Corona-Pandemie"
+					},
+					{
+						"start": "86",
+						"end": "90",
+						"text": "die Erwerbssituation von vielen Studierenden schwieriger geworden ist."
+					},
+					{
+						"start": "91",
+						"end": "95",
+						"text": "Durch viele Nebenjobs, die von Studis ausgeführt werden, wie in der Gastronomiebranche,"
+					},
+					{
+						"start": "95",
+						"end": "100",
+						"text": "die durch Corona und der Pandemie weggefallen sind, ist diese Erwerbssituation viel schwieriger geworden,"
+					},
+					{
+						"start": "100",
+						"end": "105",
+						"text": "was diese Studierenden eine zusätzliche Belastung darstellt."
+					},
+					{
+						"start": "106",
+						"end": "111",
+						"text": "Daran lässt sich erkennen, wie ein Studium auch finanziert wird, wie wir jetzt an den drei Säulen sehen."
+					}
+				]
+			},
+			{
+				"start": "111",
+				"end": "144",
+				"text": "Es ist einmal, dass wir einmal die familiäre Unterstützung haben, das heißt zum Beispiel, dass die Eltern ein Geld geben oder die Großeltern. Als zweite Stelle kommt dann schon die Nebenbeschäftigung oder auch staatliche Unterstützung, zum Beispiel in Form von BAföG oder Stipendien. Daran können wir sehen, dass die Nebenbeschäftigung ein wichtiger Pfeiler der Finanzierung ist, weswegen wir uns die Frage gestellt haben, ob es einen Unterschied zwischen Studierenden gibt, die einen Nebenjob ausüben und die keinen Nebenjob ausüben, hinsichtlich ihres Stressempfindens.",
+				"sentences": [
+					{
+						"start": "111",
+						"end": "116",
+						"text": "Es ist einmal, dass wir einmal die familiäre Unterstützung haben,"
+					},
+					{
+						"start": "116",
+						"end": "120",
+						"text": "das heißt zum Beispiel, dass die Eltern ein Geld geben oder die Großeltern."
+					},
+					{
+						"start": "121",
+						"end": "124",
+						"text": "Als zweite Stelle kommt dann schon die Nebenbeschäftigung"
+					},
+					{
+						"start": "124",
+						"end": "129",
+						"text": "oder auch staatliche Unterstützung, zum Beispiel in Form von BAföG oder Stipendien."
+					},
+					{
+						"start": "130",
+						"end": "134",
+						"text": "Daran können wir sehen, dass die Nebenbeschäftigung ein wichtiger Pfeiler der Finanzierung ist,"
+					},
+					{
+						"start": "134",
+						"end": "139",
+						"text": "weswegen wir uns die Frage gestellt haben, ob es einen Unterschied zwischen Studierenden gibt,"
+					},
+					{
+						"start": "139",
+						"end": "144",
+						"text": "die einen Nebenjob ausüben und die keinen Nebenjob ausüben, hinsichtlich ihres Stressempfindens."
+					}
+				]
+			}
+		]
+	}
 ]

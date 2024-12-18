@@ -42,7 +42,7 @@ const TranscriptList = (props: ITranscriptListProps) => {
 				return (
 					<div
 						key={interval.text}
-						className="p-4 mb-4 border border-gray-200 rounded-md dark:bg-slate-800"
+						className="p-4 mb-4 border border-gray-200 rounded-md dark:bg-slate-800 text-pretty text-justify"
 					>
 						<p className="mb-1">
 							{formatSecondsToMinutes(interval.start)}
@@ -54,19 +54,22 @@ const TranscriptList = (props: ITranscriptListProps) => {
 								props.videoTime < Number(interval.end);
 
 							return (
-								<span
-									key={sentence.text}
-									className={`hover:bg-yellow-500 hover:text-black cursor-pointer ${
-										isActiveSentence
-											? "bg-yellow-500 text-black"
-											: ""
-									}`}
-									onClick={() =>
-										handleSentenceClick(sentence.start)
-									}
-								>
-									{sentence.text}{" "}
-								</span>
+								<>
+									<span
+										key={sentence.text}
+										className={`hover:transition-all hover:bg-yellow-300 hover:text-black cursor-pointer ${
+											isActiveSentence
+												? "bg-yellow-500 text-black"
+												: ""
+										}`}
+										onClick={() =>
+											handleSentenceClick(sentence.start)
+										}
+									>
+										{sentence.text}
+									</span>
+									<span> </span>
+								</>
 							);
 						})}
 					</div>
