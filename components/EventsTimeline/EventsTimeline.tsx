@@ -29,7 +29,7 @@ const EventsTimeline = (props: IEventsTimelineProps) => {
 
 	return (
 		<div className="w-full">
-			<div className="flex justify-between items-center relative border-t-2 border-gray-500">
+			<div className="relative border-t-2 border-gray-500">
 				{props.events.Intervals.map(interval => {
 					if (
 						!props.videoDuration ||
@@ -47,14 +47,13 @@ const EventsTimeline = (props: IEventsTimelineProps) => {
 							tooltipComponent={
 								interval.annotations.feedbackMessage
 							}
+							style={{
+								left: `${position}%`,
+							}}
 						>
 							<div
 								onClick={() => handleEventClick(interval.start)}
-								className="absolute w-3 h-3 bg-white rounded-full border-2 border-black cursor-pointer"
-								style={{
-									left: `${position}%`,
-									transform: "translate(-50%, -50%)",
-								}}
+								className="absolute w-3 h-3 bg-white rounded-full border-2 border-black cursor-pointer translate-x--1/2 -translate-y-1/2"
 							/>
 						</Tooltip>
 					);
