@@ -6,7 +6,7 @@ import {
 	VideoDetails,
 } from "@/components";
 import { useVideoTimestamp } from "@/hooks";
-import { Event, Transcript, Video, VideoTab } from "@/types";
+import { Event, Feedback, Transcript, Video, VideoTab } from "@/types";
 import { Tabs, Tab, Box } from "@mui/material";
 import { GetStaticPathsResult, GetStaticPropsContext } from "next";
 import { useState } from "react";
@@ -51,13 +51,13 @@ export default function CreateVideoFeedbackPage(props: {
 						className="w-full rounded-lg border border-gray-300 shadow-sm"
 						onTimeUpdate={handleTimeUpdate}
 					>
-						<source src={props.video.videoUrl} type="video/mp4" />
+						<source src={props.video.video_url} type="video/mp4" />
 						Your browser does not support the video tag.
 					</video>
 					<EventsTimeline
 						events={props.events}
 						onEventClick={handleTimestampClick}
-						videoDuration={props.video.videoDuration}
+						videoDuration={props.video.video_duration}
 					/>
 					<Editor />
 					<button
@@ -121,10 +121,8 @@ export default function CreateVideoFeedbackPage(props: {
 }
 
 export async function getStaticPaths(): Promise<GetStaticPathsResult> {
-	const dataDirectory = path.join(process.cwd(), "data");
-	const filePath = path.join(dataDirectory, "videos.json");
-	const fileContents = fs.readFileSync(filePath, "utf-8");
-	const videos: Video[] = JSON.parse(fileContents);
+	const res = await fetch("http://127.0.0.1:8000/api/presentations/");
+	const videos: Video[] = await res.json();
 
 	const paths = videos.map(video => ({
 		params: { videoId: video.id.toString() },
@@ -136,27 +134,21 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult> {
 export async function getStaticProps(context: GetStaticPropsContext) {
 	const { videoId } = context.params!;
 
-	const dataDirectory = path.join(process.cwd(), "data");
-	const videosFilePath = path.join(dataDirectory, "videos.json");
-	const videoFileContents = fs.readFileSync(videosFilePath, "utf-8");
-	const videos: Video[] = JSON.parse(videoFileContents);
-	const video = videos.find(v => v.id === videoId);
+	const res = await fetch("http://127.0.0.1:8000/api/presentations/");
+	const videos: Video[] = await res.json();
+	const video = videos.find(video => video.id.toString() === videoId);
 
-	const eventsFilePath = path.join(dataDirectory, "events.json");
-	const eventsFileContent = fs.readFileSync(eventsFilePath, "utf-8");
-	const allEvents: Event[] = JSON.parse(eventsFileContent);
-	const events = allEvents.find(event => event.RecordingID === videoId);
-
-	const transcriptsFilePaths = path.join(dataDirectory, "transcripts.json");
-	const transcriptsContent = fs.readFileSync(transcriptsFilePaths, "utf-8");
-	const transcripts: Event[] = JSON.parse(transcriptsContent);
-	const transcript = transcripts.find(event => event.RecordingID === videoId);
+	if (!video) {
+		return {
+			notFound: true,
+		};
+	}
 
 	return {
 		props: {
 			video,
-			events: events || null,
-			transcript: transcript || null,
+			events: video.presentation_events || null,
+			transcript: video.transcription || null,
 		},
 	};
 }

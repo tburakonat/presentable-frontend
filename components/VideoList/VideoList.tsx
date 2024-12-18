@@ -53,7 +53,7 @@ export default function VideoList({ videos }: IVideoListProps) {
 					<div className="mb-4">
 						<video
 							className="w-full rounded-lg"
-							src={video.videoUrl}
+							src={video.video_url}
 							muted
 							loop={false}
 							onMouseEnter={e =>

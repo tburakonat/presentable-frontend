@@ -31,8 +31,8 @@ export default function Navbar() {
 					href="/profile"
 				>
 					{
-						user?.firstName ? 
-						user?.firstName + " " + user?.lastName : 
+						user?.id ? 
+						user?.first_name + " " + user?.last_name : 
 						"Profile"
 					}
 				</Link>

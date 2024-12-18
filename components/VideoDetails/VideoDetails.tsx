@@ -14,11 +14,12 @@ export default function VideoDetails({ video }: IVideoDetails) {
 			<div className="text-sm">
 				<p>
 					<span className="font-semibold">Created By:</span>{" "}
-					{video.createdBy}
+					{video.student.user.first_name}{" "}
+					{video.student.user.last_name}
 				</p>
 				<p>
 					<span className="font-semibold">Uploaded On:</span>{" "}
-					{new Date(video.createdAt).toLocaleDateString("de-DE")}
+					{new Date(video.created_at).toLocaleDateString("de-DE")}
 				</p>
 			</div>
 		</div>

@@ -27,12 +27,10 @@ export default function VideosPage({ videos }: IVideosProps) {
 }
 
 
-export async function getStaticProps(): Promise<GetStaticPropsResult<IVideosProps>> {
-  const dataDirectory = path.join(process.cwd(), 'data');
-  const filePath = path.join(dataDirectory, 'videos.json');
-  const fileContents = fs.readFileSync(filePath, 'utf-8');
-  const videos = JSON.parse(fileContents);
-  
+export async function getStaticProps(): Promise<GetStaticPropsResult<IVideosProps>> {  
+  const res = await fetch('http://127.0.0.1:8000/api/presentations/');
+  const videos = await res.json();
+
     return {
       props: {
         videos,

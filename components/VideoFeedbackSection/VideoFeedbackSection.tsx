@@ -1,8 +1,9 @@
-import { Video } from "@/types";
+import { Feedback, Video } from "@/types";
 import Link from "next/link";
 
 interface IVideoFeedbackSection {
 	video: Video;
+	feedbacks: Feedback[];
 	onTimestampClick: (time: number) => void;
 }
 
@@ -20,9 +21,9 @@ export default function VideoFeedbackSection(props: IVideoFeedbackSection) {
 				</Link>
 			</div>
 
-			{props.video.feedback.length > 0 ? (
+			{props.feedbacks.length > 0 ? (
 				<div className="space-y-4">
-					{props.video.feedback.map(fb => (
+					{props.feedbacks.map(fb => (
 						<div
 							key={fb.id}
 							className="p-4 rounded-lg shadow-md border-l-4 border-blue-500 dark:bg-slate-900"
@@ -34,16 +35,17 @@ export default function VideoFeedbackSection(props: IVideoFeedbackSection) {
 								View Feedback
 							</Link>
 							<p className="text-sm text-gray-500">
-								By {fb.createdBy} on{" "}
-								{new Date(fb.createdAt).toLocaleDateString("de-DE")}
+								By {fb.teacher.user.first_name}{" "}
+								{fb.teacher.user.last_name} on{" "}
+								{new Date(fb.created_at).toLocaleDateString(
+									"de-DE"
+								)}
 							</p>
 						</div>
 					))}
 				</div>
 			) : (
-				<p>
-					No feedback available for this video.
-				</p>
+				<p>No feedback available for this video.</p>
 			)}
 		</div>
 	);

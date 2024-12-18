@@ -35,12 +35,16 @@ export default function FeedbackContent(props: IFeedbackProps) {
         );
     }
 
+    function convertLineBreaks(content: string) {
+        return content.replace(/\\n/g, '\n'); // i need this because the backend saves the feedback with \\n instead of \n
+    }
+
     return (
         <ReactMarkdown 
             components={{ a: renderLinkOrTimestamp }} 
             className={`${styles.feedbackContent}`}
         >
-            {props.feedback}
+            {convertLineBreaks(props.feedback)}
         </ReactMarkdown>
     );
 }

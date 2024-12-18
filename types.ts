@@ -1,34 +1,50 @@
 export interface Feedback {
-    id: string;
+    id: number;
+    teacher: {
+        id: number;
+        user: User;
+    },
     content: string;
-    createdBy: string;
-    createdAt: string;
-    comments: Comment[];
+    created_at: string;
+    presentation: Video;
 }
 
 export interface Comment {
     id: string;
+    user: User;
+    feedback: Feedback;
     content: string;
-    createdBy: string;
-    createdAt: string;
+    created_at: string;
 }
 
 export interface Video {
-    id: string;
+    id: number;
     title: string;
     description: string;
-    videoUrl: string;
-    videoDuration: string;
-    createdBy: string;
-    createdAt: string;
-    feedback: Feedback[];
+    video_url: string;
+    video_duration: string;
+    student: {
+        id: number;
+        user: User;
+    };
+    created_at: string;
+    presentation_events: Event;
+    transcription: Transcript;
+    course: Course;
+}
+
+export interface Course {
+    id: string;
+    name: string;
 }
 
 export interface User {
-    id: string;
-    firstName: string;
-    lastName: string;
-    role: UserRole;
+    id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+    password: string;
+    date_joined: string;
 }
 
 export enum UserRole {

@@ -7,7 +7,7 @@ import {
 	VideoDetails,
 } from "@/components";
 import { useVideoTimestamp } from "@/hooks";
-import { Event, Feedback, Transcript, Video, VideoTab } from "@/types";
+import { Comment, Event, Feedback, Transcript, Video, VideoTab } from "@/types";
 import { Box, Tab, Tabs } from "@mui/material";
 import { GetStaticPropsContext } from "next";
 import { useEffect, useState } from "react";
@@ -21,6 +21,7 @@ interface IVideoFeedbackPageProps {
 	feedback: Feedback;
 	events: Event | null;
 	transcript: Transcript | null;
+	comments: Comment[] | null;
 }
 
 export default function VideoFeedbackPage(props: IVideoFeedbackPageProps) {
@@ -52,13 +53,13 @@ export default function VideoFeedbackPage(props: IVideoFeedbackPageProps) {
 						className="w-full rounded-lg border border-gray-300 shadow-sm"
 						onTimeUpdate={handleTimeUpdate}
 					>
-						<source src={props.video.videoUrl} type="video/mp4" />
+						<source src={props.video.video_url} type="video/mp4" />
 						Your browser does not support the video tag.
 					</video>
 					<EventsTimeline
 						events={props.events}
 						onEventClick={handleTimestampClick}
-						videoDuration={props.video.videoDuration}
+						videoDuration={props.video.video_duration}
 					/>
 					<div className="mt-8 p-6 rounded-lg shadow-md dark:bg-slate-800">
 						<h2 className="text-xl font-bold mb-4">Feedback</h2>
@@ -67,9 +68,10 @@ export default function VideoFeedbackPage(props: IVideoFeedbackPageProps) {
 							onTimestampClick={handleTimestampClick}
 						/>
 						<p className="text-sm text-gray-500">
-							By {props.feedback.createdBy} on{" "}
+							By {props.feedback.teacher.user.first_name}{" "}
+							{props.feedback.teacher.user.last_name} on{" "}
 							{new Date(
-								props.feedback.createdAt
+								props.feedback.created_at
 							).toLocaleDateString("de-DE")}
 						</p>
 					</div>
@@ -126,7 +128,7 @@ export default function VideoFeedbackPage(props: IVideoFeedbackPageProps) {
 						)}
 						{value === VideoTab.Comments && (
 							<CommentSection
-								feedback={props.feedback}
+								comments={props.comments}
 								onTimestampClick={handleTimestampClick}
 							/>
 						)}
@@ -138,49 +140,49 @@ export default function VideoFeedbackPage(props: IVideoFeedbackPageProps) {
 }
 
 export const getStaticPaths = async () => {
-	const dataDirectory = path.join(process.cwd(), "data");
-	const filePath = path.join(dataDirectory, "videos.json");
-	const fileContents = fs.readFileSync(filePath, "utf-8");
-	const videos: Video[] = JSON.parse(fileContents);
+	const res = await fetch("http://127.0.0.1:8000/api/feedbacks/");
+	const feedbacks: Feedback[] = await res.json();
 
-	const paths = videos.flatMap(video => {
-		return video.feedback.map(fb => {
-			return {
-				params: { videoId: video.id.toString(), feedbackId: fb.id },
-			};
-		});
+	const paths = feedbacks.map(feedback => {
+		return {
+			params: {
+				videoId: feedback.presentation.id.toString(),
+				feedbackId: feedback.id.toString(),
+			},
+		};
 	});
 
 	return { paths, fallback: false };
 };
 
 export const getStaticProps = async (context: GetStaticPropsContext) => {
-	const { videoId, feedbackId } = context.params!;
+	const { feedbackId } = context.params!;
 
-	const dataDirectory = path.join(process.cwd(), "data");
-	const videosFilePath = path.join(dataDirectory, "videos.json");
-	const videoFileContents = fs.readFileSync(videosFilePath, "utf-8");
-	const videos: Video[] = JSON.parse(videoFileContents);
-	const video = videos.find(v => v.id === videoId);
+	const res = await fetch("http://127.0.0.1:8000/api/feedbacks/");
+	const feedbacks: Feedback[] = await res.json();
+	const feedback = feedbacks.find(
+		feedback => feedback.id.toString() === feedbackId
+	);
 
-	const feedback = video?.feedback.find(fb => fb.id === feedbackId);
+	if (!feedback) {
+		return {
+			notFound: true,
+		};
+	}
 
-	const eventsFilePath = path.join(dataDirectory, "events.json");
-	const eventsFileContent = fs.readFileSync(eventsFilePath, "utf-8");
-	const allEvents: Event[] = JSON.parse(eventsFileContent);
-	const events = allEvents.find(event => event.RecordingID === videoId);
-
-	const transcriptsFilePaths = path.join(dataDirectory, "transcripts.json");
-	const transcriptsContent = fs.readFileSync(transcriptsFilePaths, "utf-8");
-	const transcripts: Event[] = JSON.parse(transcriptsContent);
-	const transcript = transcripts.find(event => event.RecordingID === videoId);
+	const res2 = await fetch("http://127.0.0.1:8000/api/feedback-comments/");
+	const allComments: Comment[] = await res2.json();
+	const comments = allComments.filter(
+		comment => comment.feedback.id === feedback.id
+	);
 
 	return {
 		props: {
-			video,
+			video: feedback.presentation,
 			feedback,
-			events: events || null,
-			transcript: transcript || null,
+			events: feedback.presentation.presentation_events || null,
+			transcript: feedback.presentation.transcription || null,
+			comments: comments || null,
 		},
 	};
 };
