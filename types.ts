@@ -61,3 +61,13 @@ export interface Transcript {
         }[]
     }[]
 }
+
+export type Template = {
+	id: number;
+	name: string;
+	content: string;
+};
+
+export enum StorageKey {
+	Templates = "presentable-feedback-editor-templates",
+}

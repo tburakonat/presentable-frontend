@@ -1,22 +1,20 @@
 import { Editor } from "@tiptap/react";
-import { useState } from "react";
 import styles from "./Menubar.module.css";
 import { Tooltip } from "@/components";
+import { Template } from "@/types";
+import { Dispatch, SetStateAction } from "react";
 
 interface IMenubarProps {
 	editor: Editor | null;
+	templates: Template[];
+	setTemplates: Dispatch<SetStateAction<Template[]>>;
 }
 
-export default function Menubar({ editor }: IMenubarProps) {
-	const [templates, setTemplates] = useState([
-		{
-			id: 1,
-			name: "Default",
-			content:
-				"<h1>Feedback Template</h1><div><h2>Positive Feedback 🎉</h2></div><div><h2>Corrective Feedback 🛠️</h2></div><div><h2>Recommendations 💡</h2></div><div><h2>Additional Notes 📝</h2></div>",
-		},
-	]);
-
+export default function Menubar({
+	editor,
+	templates,
+	setTemplates,
+}: IMenubarProps) {
 	if (!editor) {
 		return null;
 	}
@@ -85,6 +83,9 @@ export default function Menubar({ editor }: IMenubarProps) {
 		}
 
 		const name = prompt("Name your template");
+		if (!name) {
+			return;
+		}
 		const newTemplateId = templates[templates.length - 1]?.id + 1 || 1;
 		setTemplates([
 			...templates,
@@ -97,7 +98,9 @@ export default function Menubar({ editor }: IMenubarProps) {
 	};
 
 	const deleteTemplate = (templateId: number) => {
-		const saveTemplate = confirm("Are you sure you want to delete this template?");
+		const saveTemplate = confirm(
+			"Are you sure you want to delete this template?"
+		);
 
 		if (saveTemplate) {
 			setTemplates(templates.filter(t => t.id !== templateId));
@@ -163,15 +166,17 @@ export default function Menubar({ editor }: IMenubarProps) {
 						</Tooltip>
 					</span>
 				))}
-				<Tooltip
-					tooltipComponent={
-						"Create new template from current content"
-					}
-				>
-					<button onClick={addTemplate}>
-						<i className="ri-file-add-fill"></i>
-					</button>
-				</Tooltip>
+				{templates.length < 5 && (
+					<Tooltip
+						tooltipComponent={
+							"Create new template from current content"
+						}
+					>
+						<button onClick={addTemplate}>
+							<i className="ri-file-add-fill"></i>
+						</button>
+					</Tooltip>
+				)}
 			</div>
 		</div>
 	);
