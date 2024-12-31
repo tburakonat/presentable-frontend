@@ -3,25 +3,33 @@ import {
 	EventList,
 	EventsTimeline,
 	TranscriptList,
-	VideoDetails,
+	PresentationDetails,
 } from "@/components";
 import { useVideoTimestamp } from "@/hooks";
-import { Event, Feedback, Transcript, Video, VideoTab } from "@/types";
+import { Presentation, VideoTab } from "@/types";
 import { Tabs, Tab, Box } from "@mui/material";
-import { GetStaticPathsResult, GetStaticPropsContext } from "next";
-import { useState } from "react";
-
-import fs from "fs";
-import path from "path";
+import { GetServerSidePropsContext } from "next";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { dataService } from "@/services";
 
-export default function CreateVideoFeedbackPage(props: {
-	video: Video;
-	events: Event | null;
-	transcript: Transcript | null;
-}) {
+
+interface CreateFeedbackPageProps {
+	presentation: Presentation;
+}
+
+export default function CreateFeedbackPage(props: CreateFeedbackPageProps) {
 	const videoRef = useVideoTimestamp();
 	const [value, setValue] = useState(VideoTab.Description);
+
+	useEffect(() => {
+		if (typeof window !== "undefined") {
+		  const hash = window.location.hash as VideoTab;
+		  setValue(hash || VideoTab.Description);
+		}
+	}, []);
+
+
 	const [videoTime, setVideoTime] = useState(0);
 
 	const handleTimeUpdate = () => {
@@ -51,13 +59,16 @@ export default function CreateVideoFeedbackPage(props: {
 						className="w-full rounded-lg border border-gray-300 shadow-sm"
 						onTimeUpdate={handleTimeUpdate}
 					>
-						<source src={props.video.video_url} type="video/mp4" />
+						<source
+							src={props.presentation.video_url}
+							type="video/mp4"
+						/>
 						Your browser does not support the video tag.
 					</video>
 					<EventsTimeline
-						events={props.events}
+						events={props.presentation.presentation_events}
 						onEventClick={handleTimestampClick}
-						videoDuration={props.video.video_duration}
+						videoDuration={props.presentation.video_duration}
 					/>
 					<Editor />
 					<button
@@ -96,17 +107,17 @@ export default function CreateVideoFeedbackPage(props: {
 					</Tabs>
 					<Box p={2} className="overflow-y-auto max-h-[100vh]">
 						{value === VideoTab.Description && (
-							<VideoDetails video={props.video} />
+							<PresentationDetails presentation={props.presentation} />
 						)}
 						{value === VideoTab.Events && (
 							<EventList
-								event={props.events}
+								event={props.presentation.presentation_events}
 								onEventClick={handleTimestampClick}
 							/>
 						)}
 						{value === VideoTab.Transcription && (
 							<TranscriptList
-								transcript={props.transcript}
+								transcript={props.presentation.transcription}
 								onTranscriptClick={handleTimestampClick}
 								videoTime={videoTime}
 							/>
@@ -120,35 +131,44 @@ export default function CreateVideoFeedbackPage(props: {
 	);
 }
 
-export async function getStaticPaths(): Promise<GetStaticPathsResult> {
-	const res = await fetch("http://127.0.0.1:8000/api/presentations/");
-	const videos: Video[] = await res.json();
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+	const { access_token } = context.req.cookies;
+	const { courseId, presentationId } = context.params!;
 
-	const paths = videos.map(video => ({
-		params: { videoId: video.id.toString() },
-	}));
-
-	return { paths, fallback: false };
-}
-
-export async function getStaticProps(context: GetStaticPropsContext) {
-	const { videoId } = context.params!;
-
-	const res = await fetch("http://127.0.0.1:8000/api/presentations/");
-	const videos: Video[] = await res.json();
-	const video = videos.find(video => video.id.toString() === videoId);
-
-	if (!video) {
+	if (!access_token) {
 		return {
-			notFound: true,
+			redirect: {
+				destination: `/login?next=/courses/${courseId}/presentations/${presentationId}/feedbacks/new`,
+				permanent: false,
+			},
 		};
 	}
 
+	const response = await dataService.getPresentationById(
+		access_token,
+		presentationId as string
+	);
+
+	if (!response.ok && response.status === 401) {
+		return {
+			redirect: {
+				destination: `/login?next=/courses/${courseId}/presentations/${presentationId}/feedbacks/new`,
+				permanent: false,
+			},
+		};
+	};
+
+	if (!response.ok && response.status === 404) {
+		return {
+			notFound: true,
+		};
+	};
+
+	const presentation: Presentation = await response.json();
+
 	return {
 		props: {
-			video,
-			events: video.presentation_events || null,
-			transcript: video.transcription || null,
+			presentation,
 		},
 	};
 }

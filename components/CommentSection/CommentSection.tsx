@@ -36,13 +36,14 @@ export default function CommentSection(props: ICommentSectionProps) {
 							onTimestampClick={props.onTimestampClick}
 						/>
 						<p className="text-sm text-gray-500">
-							By {comment.user.first_name}{" "}
-							{comment.user.last_name} on{" "}
+							By {comment.created_by.first_name}{" "}
+							{comment.created_by.last_name} on{" "}
 							{new Date(comment.created_at).toLocaleDateString(
 								"de-DE"
 							)}{" "}
 							{new Date(comment.created_at).toLocaleTimeString(
-								"de-DE", { hour: "2-digit", minute: "2-digit" }
+								"de-DE",
+								{ hour: "2-digit", minute: "2-digit" }
 							)}
 						</p>
 					</div>

@@ -1,3 +1,4 @@
+import React from "react";
 import { Transcript } from "@/types";
 
 interface ITranscriptListProps {
@@ -54,9 +55,8 @@ const TranscriptList = (props: ITranscriptListProps) => {
 								props.videoTime < Number(interval.end);
 
 							return (
-								<>
+								<React.Fragment key={sentence.start}>
 									<span
-										key={sentence.text}
 										className={`hover:transition-all hover:bg-yellow-300 hover:text-black cursor-pointer ${
 											isActiveSentence
 												? "bg-yellow-500 text-black"
@@ -69,7 +69,7 @@ const TranscriptList = (props: ITranscriptListProps) => {
 										{sentence.text}
 									</span>
 									<span> </span>
-								</>
+								</React.Fragment>
 							);
 						})}
 					</div>

@@ -1,41 +1,25 @@
 export interface Feedback {
     id: number;
-    teacher: {
-        id: number;
-        user: User;
-    },
+    presentation: Presentation;
     content: string;
+    created_by: User;
     created_at: string;
-    presentation: Video;
 }
 
 export interface Comment {
     id: string;
-    user: User;
     feedback: Feedback;
     content: string;
     created_at: string;
-}
-
-export interface Video {
-    id: number;
-    title: string;
-    description: string;
-    video_url: string;
-    video_duration: string;
-    student: {
-        id: number;
-        user: User;
-    };
-    created_at: string;
-    presentation_events: Event;
-    transcription: Transcript;
-    course: Course;
+    created_by: User;
 }
 
 export interface Course {
     id: string;
     name: string;
+    description: string;
+    students: User[];
+    teachers: User[];
 }
 
 export interface User {
@@ -43,13 +27,14 @@ export interface User {
     first_name: string;
     last_name: string;
     email: string;
-    password: string;
-    date_joined: string;
+    username: string;
+    role: UserRole;
 }
 
 export enum UserRole {
     TEACHER = "TEACHER",
     STUDENT = "STUDENT",
+    ADMIN = "ADMIN",
 }
 
 export interface Event {
@@ -86,11 +71,31 @@ export type Template = {
 
 export enum StorageKey {
 	Templates = "presentable-feedback-editor-templates",
+    AuthFlag = "presentable-auth-flag",
+}
+
+export enum StorageValue {
+    AuthFlagTrue = "true",
+    AuthFlagFalse = "false",
 }
 
 export enum VideoTab {
     Description = "#description",
     Events = "#events",
     Transcription = "#transcription",
+    TranscriptionComments = "#transcription-comments",
     Comments = "#comments",
 }
+
+export type Presentation = {
+	id: number;
+	title: string;
+	description: string;
+	video_url: string;
+	video_duration: string;
+	presentation_events: Event;
+	transcription: Transcript;
+	created_by: User;
+	course: Course;
+	created_at: string;
+};

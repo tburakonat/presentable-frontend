@@ -1,9 +1,15 @@
-import { useToggleUser, useUser } from "@/context/UserContext";
+import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function Navbar() {
-	const user = useUser();
-	const toggleUser = useToggleUser();
+	const router = useRouter();
+	const { user, isAuthenticated, logout } = useAuth();
+
+	const handleLogout = async () => {
+		await logout();
+		router.push("/login");
+	};
 
 	return (
 		<nav className="flex flex-row justify-between items-center p-4 shadow-md">
@@ -14,28 +20,32 @@ export default function Navbar() {
 				>
 					Home
 				</Link>
-				<Link
-					className="mr-6 text-lg font-medium hover:text-gray-600 transition-colors"
-					href="/videos"
-				>
-					Videos
-				</Link>
 			</div>
 
 			<div>
-				<button className="mr-2" onClick={() => toggleUser?.()}>
-					Change role
-				</button>
-				<Link
-					className="font-medium transition-colors"
-					href="/profile"
-				>
-					{
-						user?.id ? 
-						user?.first_name + " " + user?.last_name : 
-						"Profile"
-					}
-				</Link>
+				{isAuthenticated ? (
+					<>
+						<Link
+							className="mr-6 text-lg font-medium hover:text-gray-600 transition-colors"
+							href="/dashboard"
+						>
+							Dashboard
+						</Link>
+						<button
+							onClick={handleLogout}
+							className="mr-6 text-lg font-medium hover:text-gray-600 transition-colors"
+						>
+							Logout
+						</button>
+					</>
+				) : (
+					<Link
+						className="mr-6 text-lg font-medium hover:text-gray-600 transition-colors"
+						href="/login"
+					>
+						Login
+					</Link>
+				)}
 			</div>
 		</nav>
 	);

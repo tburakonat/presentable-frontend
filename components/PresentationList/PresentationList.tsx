@@ -1,11 +1,11 @@
+import { Presentation } from "@/types";
 import Link from "next/link";
-import { Video } from "@/types";
 
-interface IVideoListProps {
-	videos: Video[];
+interface IPresentationListPops {
+	presentations: Presentation[];
 }
 
-export default function VideoList({ videos }: IVideoListProps) {
+export default function PresentationList(props: IPresentationListPops) {
 	const handleMouseEnter = (videoElement: HTMLVideoElement) => {
 		const duration = videoElement.duration;
 		if (isNaN(duration) || duration <= 30) {
@@ -45,15 +45,15 @@ export default function VideoList({ videos }: IVideoListProps) {
 
 	return (
 		<>
-			{videos.map(video => (
+			{props.presentations.map(presentation => (
 				<div
-					key={video.id}
+					key={presentation.id}
 					className="flex flex-col justify-between dark:bg-slate-800 rounded-lg p-4 shadow-xl"
 				>
 					<div className="mb-4">
 						<video
 							className="w-full rounded-lg"
-							src={video.video_url}
+							src={presentation.video_url}
 							muted
 							loop={false}
 							onMouseEnter={e =>
@@ -65,20 +65,17 @@ export default function VideoList({ videos }: IVideoListProps) {
 						/>
 					</div>
 
-					{/* Video Title */}
 					<h2 className="text-xl font-semibold mb-1">
-						{video.title}
+						{presentation.title}
 					</h2>
 
-					{/* Video Description */}
-					<p className="mb-2">{video.description}</p>
+					<p className="mb-2">{presentation.description}</p>
 
-					{/* Watch Video Link */}
 					<Link
-						href={`/videos/${video.id}`}
+						href={`/presentations/${presentation.id}`}
 						className="text-blue-600 hover:underline"
 					>
-						Watch Video →
+						Watch Presentation →
 					</Link>
 				</div>
 			))}

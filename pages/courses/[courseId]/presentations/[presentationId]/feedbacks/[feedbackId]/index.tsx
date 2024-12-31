@@ -4,30 +4,36 @@ import {
 	EventsTimeline,
 	FeedbackContent,
 	TranscriptList,
-	VideoDetails,
+	PresentationDetails,
 } from "@/components";
 import { useVideoTimestamp } from "@/hooks";
-import { Comment, Event, Feedback, Transcript, Video, VideoTab } from "@/types";
+import { Comment, Feedback, Presentation, VideoTab } from "@/types";
 import { Box, Tab, Tabs } from "@mui/material";
-import { GetStaticPropsContext } from "next";
+import { GetServerSidePropsContext } from "next";
 import { useEffect, useState } from "react";
 
-import fs from "fs";
-import path from "path";
 import Link from "next/link";
+import { dataService } from "@/services";
 
-interface IVideoFeedbackPageProps {
-	video: Video;
+interface PresentationFeedbackDetailsPageProps {
+	presentation: Presentation;
 	feedback: Feedback;
-	events: Event | null;
-	transcript: Transcript | null;
-	comments: Comment[] | null;
+	comments: Comment[];
 }
 
-export default function VideoFeedbackPage(props: IVideoFeedbackPageProps) {
+function PresentationFeedbackDetailsPage(
+	props: PresentationFeedbackDetailsPageProps
+) {
 	const videoRef = useVideoTimestamp();
-	const [value, setValue] = useState<VideoTab>(VideoTab.Description);
 	const [videoTime, setVideoTime] = useState(0);
+	const [value, setValue] = useState(VideoTab.Description);
+
+	useEffect(() => {
+		if (typeof window !== "undefined") {
+			const hash = window.location.hash as VideoTab;
+			setValue(hash || VideoTab.Description);
+		}
+	}, []);
 
 	const handleTimeUpdate = () => {
 		if (videoRef.current) {
@@ -53,13 +59,16 @@ export default function VideoFeedbackPage(props: IVideoFeedbackPageProps) {
 						className="w-full rounded-lg border border-gray-300 shadow-sm"
 						onTimeUpdate={handleTimeUpdate}
 					>
-						<source src={props.video.video_url} type="video/mp4" />
+						<source
+							src={props.presentation.video_url}
+							type="video/mp4"
+						/>
 						Your browser does not support the video tag.
 					</video>
 					<EventsTimeline
-						events={props.events}
+						events={props.presentation.presentation_events}
 						onEventClick={handleTimestampClick}
-						videoDuration={props.video.video_duration}
+						videoDuration={props.presentation.video_duration}
 					/>
 					<div className="mt-8 p-6 rounded-lg shadow-md dark:bg-slate-800">
 						<h2 className="text-xl font-bold mb-4">Feedback</h2>
@@ -68,8 +77,8 @@ export default function VideoFeedbackPage(props: IVideoFeedbackPageProps) {
 							onTimestampClick={handleTimestampClick}
 						/>
 						<p className="text-sm text-gray-500">
-							By {props.feedback.teacher.user.first_name}{" "}
-							{props.feedback.teacher.user.last_name} on{" "}
+							By {props.feedback.created_by.first_name}{" "}
+							{props.feedback.created_by.last_name} on{" "}
 							{new Date(
 								props.feedback.created_at
 							).toLocaleDateString("de-DE")}
@@ -111,17 +120,19 @@ export default function VideoFeedbackPage(props: IVideoFeedbackPageProps) {
 					</Tabs>
 					<Box p={2} className="overflow-y-auto max-h-[100vh]">
 						{value === VideoTab.Description && (
-							<VideoDetails video={props.video} />
+							<PresentationDetails
+								presentation={props.presentation}
+							/>
 						)}
 						{value === VideoTab.Events && (
 							<EventList
-								event={props.events}
+								event={props.presentation.presentation_events}
 								onEventClick={handleTimestampClick}
 							/>
 						)}
 						{value === VideoTab.Transcription && (
 							<TranscriptList
-								transcript={props.transcript}
+								transcript={props.presentation.transcription}
 								onTranscriptClick={handleTimestampClick}
 								videoTime={videoTime}
 							/>
@@ -139,50 +150,64 @@ export default function VideoFeedbackPage(props: IVideoFeedbackPageProps) {
 	);
 }
 
-export const getStaticPaths = async () => {
-	const res = await fetch("http://127.0.0.1:8000/api/feedbacks/");
-	const feedbacks: Feedback[] = await res.json();
+export default PresentationFeedbackDetailsPage;
 
-	const paths = feedbacks.map(feedback => {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+	const { access_token } = context.req.cookies;
+	const { presentationId, feedbackId } = context.params!;
+
+	if (!access_token) {
 		return {
-			params: {
-				videoId: feedback.presentation.id.toString(),
-				feedbackId: feedback.id.toString(),
+			redirect: {
+				destination: `/login?next=/presentations/${presentationId}/feedbacks/${feedbackId}`,
+				permanent: false,
 			},
 		};
-	});
+	}
 
-	return { paths, fallback: false };
-};
-
-export const getStaticProps = async (context: GetStaticPropsContext) => {
-	const { feedbackId } = context.params!;
-
-	const res = await fetch("http://127.0.0.1:8000/api/feedbacks/");
-	const feedbacks: Feedback[] = await res.json();
-	const feedback = feedbacks.find(
-		feedback => feedback.id.toString() === feedbackId
+	const response = await dataService.getFeedbackById(
+		access_token,
+		feedbackId as string
 	);
 
-	if (!feedback) {
+	if (!response.ok && response.status === 401) {
+		return {
+			redirect: {
+				destination: `/login?next=/presentations/${presentationId}/feedbacks/${feedbackId}`,
+				permanent: false,
+			},
+		};
+	}
+
+	if (!response.ok && response.status === 404) {
 		return {
 			notFound: true,
 		};
 	}
 
-	const res2 = await fetch("http://127.0.0.1:8000/api/feedback-comments/");
-	const allComments: Comment[] = await res2.json();
-	const comments = allComments.filter(
-		comment => comment.feedback.id === feedback.id
+	const feedback = await response.json();
+
+	const commentsResponse = await dataService.getCommentsByFeedbackId(
+		access_token,
+		feedbackId as string
 	);
+
+	if (!commentsResponse.ok && commentsResponse.status === 401) {
+		return {
+			redirect: {
+				destination: `/login?next=/presentations/${presentationId}/feedbacks/${feedbackId}`,
+				permanent: false,
+			},
+		};
+	}
+
+	const comments = await commentsResponse.json();
 
 	return {
 		props: {
-			video: feedback.presentation,
 			feedback,
-			events: feedback.presentation.presentation_events || null,
-			transcript: feedback.presentation.transcription || null,
-			comments: comments || null,
+			presentation: feedback.presentation,
+			comments,
 		},
 	};
-};
+}

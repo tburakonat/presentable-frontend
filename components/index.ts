@@ -1,7 +1,7 @@
 import { Navbar } from "./Navbar";
-import { VideoList } from "./VideoList"
-import { VideoDetails } from "./VideoDetails"
-import { VideoFeedbackSection } from "./VideoFeedbackSection"
+import { PresentationList } from "./PresentationList"
+import { PresentationDetails } from "./PresentationDetails"
+import { PresentationFeedbackSection } from "./PresentationFeedbackSection"
 import { FeedbackContent } from "./FeedbackContent";
 import { Timestamp } from "./Timestamp";
 import { Tooltip } from "./Tooltip";
@@ -14,9 +14,9 @@ import { EventsTimeline } from "./EventsTimeline";
 
 export {
     Navbar,
-    VideoList,
-    VideoDetails,
-    VideoFeedbackSection,
+    PresentationList,
+    PresentationDetails,
+    PresentationFeedbackSection,
     FeedbackContent,
     Timestamp,
     Tooltip,

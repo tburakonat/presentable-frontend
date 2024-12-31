@@ -1,27 +1,35 @@
 import Head from "next/head";
 import {
-	VideoFeedbackSection,
-	VideoDetails,
+	PresentationFeedbackSection,
+	PresentationDetails,
 	EventList,
 	TranscriptList,
 	EventsTimeline,
 } from "@/components";
-import { Event, Feedback, Transcript, Video, VideoTab } from "@/types";
-import { GetStaticPathsResult, GetStaticPropsContext } from "next";
+import { Feedback, Presentation, VideoTab } from "@/types";
+import { GetServerSidePropsContext } from "next";
 import { useVideoTimestamp } from "@/hooks";
 import { Tab, Tabs } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { dataService } from "@/services";
 
-export default function VideoDetailsPage(props: {
-	video: Video;
+interface PresentationDetailsPageProps {
+	presentation: Presentation;
 	feedbacks: Feedback[];
-	events: Event | null;
-	transcript: Transcript | null;
-}) {
+}
+
+function PresentationDetailsPage(props: PresentationDetailsPageProps) {
 	const videoRef = useVideoTimestamp();
-	const [value, setValue] = useState(VideoTab.Description);
 	const [videoTime, setVideoTime] = useState(0);
+	const [value, setValue] = useState(VideoTab.Description);
+
+	useEffect(() => {
+		if (typeof window !== "undefined") {
+			const hash = window.location.hash as VideoTab;
+			setValue(hash || VideoTab.Description);
+		}
+	}, []);
 
 	const handleTimeUpdate = () => {
 		if (videoRef.current) {
@@ -38,13 +46,12 @@ export default function VideoDetailsPage(props: {
 	return (
 		<>
 			<Head>
-				<title>{props.video.title}</title>
+				<title>{props.presentation.title}</title>
 			</Head>
 			<div className="container mx-auto p-6">
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 					{/* Left Column: Video and Feedback List */}
 					<div className="flex flex-col space-y-6">
-						{/* Video Player */}
 						<video
 							ref={videoRef}
 							controls
@@ -52,19 +59,18 @@ export default function VideoDetailsPage(props: {
 							onTimeUpdate={handleTimeUpdate}
 						>
 							<source
-								src={props.video.video_url}
+								src={props.presentation.video_url}
 								type="video/mp4"
 							/>
 							Your browser does not support the video tag.
 						</video>
 						<EventsTimeline
-							events={props.events}
+							events={props.presentation.presentation_events}
 							onEventClick={handleTimestampClick}
-							videoDuration={props.video.video_duration}
+							videoDuration={props.presentation.video_duration}
 						/>
-						{/* Feedback List */}
-						<VideoFeedbackSection
-							video={props.video}
+						<PresentationFeedbackSection
+							presentation={props.presentation}
 							feedbacks={props.feedbacks}
 							onTimestampClick={handleTimestampClick}
 						/>
@@ -100,17 +106,23 @@ export default function VideoDetailsPage(props: {
 						</Tabs>
 						<div className="overflow-y-auto max-h-[100vh] dark:bg-slate-800 rounded-lg p-4">
 							{value === VideoTab.Description && (
-								<VideoDetails video={props.video} />
+								<PresentationDetails
+									presentation={props.presentation}
+								/>
 							)}
 							{value === VideoTab.Events && (
 								<EventList
-									event={props.events}
+									event={
+										props.presentation.presentation_events
+									}
 									onEventClick={handleTimestampClick}
 								/>
 							)}
 							{value === VideoTab.Transcription && (
 								<TranscriptList
-									transcript={props.video.transcription}
+									transcript={
+										props.presentation.transcription
+									}
 									onTranscriptClick={handleTimestampClick}
 									videoTime={videoTime}
 								/>
@@ -123,33 +135,69 @@ export default function VideoDetailsPage(props: {
 	);
 }
 
-export async function getStaticPaths(): Promise<GetStaticPathsResult> {
-	const res = await fetch("http://127.0.0.1:8000/api/presentations/");
-	const videos: Video[] = await res.json();
+export default PresentationDetailsPage;
 
-	const paths = videos.map(video => ({
-		params: { videoId: video.id.toString() },
-	}));
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+	const { access_token } = context.req.cookies;
+	const { courseId, presentationId } = context.params!;
 
-	return { paths, fallback: false };
-}
+	if (!access_token) {
+		return {
+			redirect: {
+				destination: `/login?next=/courses/${courseId}/presentations/${presentationId}`,
+				permanent: false,
+			},
+		};
+	}
 
-export async function getStaticProps(context: GetStaticPropsContext) {
-	const { videoId } = context.params!;
+	const response = await dataService.getPresentationById(
+		access_token,
+		presentationId as string
+	);
 
-	const res = await fetch("http://127.0.0.1:8000/api/presentations/");
-	const videos: Video[] = await res.json();
-	const video = videos.find(video => video.id.toString() === videoId);
+	if (!response.ok && response.status === 401) {
+		return {
+			redirect: {
+				destination: `/login?next=/courses/${courseId}/presentations/${presentationId}`,
+				permanent: false,
+			},
+		};
+	};
+
+	if (!response.ok && response.status === 404) {
+		return {
+			notFound: true,
+		};
+	};
+
+	const presentation: Presentation = await response.json();
+
+	const feedbackResponse = await dataService.getFeedbacksByPresentationId(
+		access_token,
+		presentationId as string
+	);
+
+	if (!feedbackResponse.ok && feedbackResponse.status === 401) {
+		return {
+			redirect: {
+				destination: `/login?next=/courses/${courseId}/presentations/${presentationId}`,
+				permanent: false,
+			},
+		};
+	};
+
+	if (!feedbackResponse.ok && feedbackResponse.status === 404) {
+		return {
+			notFound: true,
+		};
+	};
+
+	const feedbacks: Feedback[] = await feedbackResponse.json();
 	
-	const res2 = await fetch("http://127.0.0.1:8000/api/feedbacks/");
-	const feedbacks: Feedback[] = await res2.json();
-
 	return {
 		props: {
-			video,
+			presentation,
 			feedbacks,
-			events: video?.presentation_events || null,
-			transcript: video?.transcription || null,
 		},
 	};
 }
