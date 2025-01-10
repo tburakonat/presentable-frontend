@@ -16,12 +16,6 @@ export default async (req: NextApiRequest, res: NextApiResponse<Response>) => {
 		});
 	}
 
-	if (!req.cookies.refresh_token) {
-		return res.status(400).json({
-			detail: "Token is invalid or expired",
-		});
-	}
-
 	return res
 		.status(200)
 		.setHeader("Set-Cookie", [
