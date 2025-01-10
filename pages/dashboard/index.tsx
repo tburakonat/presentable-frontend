@@ -1,4 +1,5 @@
 import { useAuth } from "@/context/AuthContext";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Link from "next/link";
 
 export default function DashboardPage() {
@@ -38,3 +39,20 @@ export default function DashboardPage() {
 		</div>
 	);
 }
+
+export const getServerSideProps = (async (context: GetServerSidePropsContext) => {
+	const { access_token } = context.req.cookies;
+
+	if (!access_token) {
+		return {
+			redirect: {
+				destination: "/login?next=/courses",
+				permanent: false,
+			},
+		};
+	}
+
+	return {
+		props: {},
+	};
+}) satisfies GetServerSideProps;
