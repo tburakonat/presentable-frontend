@@ -1,4 +1,11 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
+import { Tab, Tabs } from "@mui/material";
+import { useState } from "react";
+
+import { VideoTab } from "@/types";
+import { useVideoTimestamp } from "@/hooks";
+import { usePresentationDetailsQuery } from "@/helpers/queries";
 import {
 	PresentationFeedbackSection,
 	PresentationDetails,
@@ -6,30 +13,43 @@ import {
 	TranscriptList,
 	EventsTimeline,
 } from "@/components";
-import { Feedback, Presentation, VideoTab } from "@/types";
-import { GetServerSidePropsContext } from "next";
-import { useVideoTimestamp } from "@/hooks";
-import { Tab, Tabs } from "@mui/material";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { dataService } from "@/services";
+import { useSession } from "@/context";
 
-interface PresentationDetailsPageProps {
-	presentation: Presentation;
-	feedbacks: Feedback[];
-}
+interface PresentationDetailsPageProps {}
 
 function PresentationDetailsPage(props: PresentationDetailsPageProps) {
+	const router = useRouter();
 	const videoRef = useVideoTimestamp();
+	const { user } = useSession();
 	const [videoTime, setVideoTime] = useState(0);
 	const [value, setValue] = useState(VideoTab.Description);
+	const [presentationQuery, feedbacksQuery] = usePresentationDetailsQuery(
+		router.query.presentationId as string
+	);
 
-	useEffect(() => {
-		if (typeof window !== "undefined") {
-			const hash = window.location.hash as VideoTab;
-			setValue(hash || VideoTab.Description);
-		}
-	}, []);
+	if (!user) {
+		return <p>User not found</p>;
+	}
+
+	if (presentationQuery.isLoading || feedbacksQuery.isLoading) {
+		return <p>Loading...</p>;
+	}
+
+	if (presentationQuery.error || feedbacksQuery.error) {
+		return (
+			<p>
+				{presentationQuery.error?.message ||
+					feedbacksQuery.error?.message}
+			</p>
+		);
+	}
+
+	const presentation = presentationQuery.data?.data;
+	const feedbacks = feedbacksQuery.data?.data ?? [];
+
+	if (!presentation) {
+		return <p>Presentation not found</p>;
+	}
 
 	const handleTimeUpdate = () => {
 		if (videoRef.current) {
@@ -46,7 +66,7 @@ function PresentationDetailsPage(props: PresentationDetailsPageProps) {
 	return (
 		<>
 			<Head>
-				<title>{props.presentation.title}</title>
+				<title>{presentation.title}</title>
 			</Head>
 			<div className="container mx-auto p-6">
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -59,19 +79,19 @@ function PresentationDetailsPage(props: PresentationDetailsPageProps) {
 							onTimeUpdate={handleTimeUpdate}
 						>
 							<source
-								src={props.presentation.video_url}
+								src={presentation.video_url}
 								type="video/mp4"
 							/>
 							Your browser does not support the video tag.
 						</video>
 						<EventsTimeline
-							events={props.presentation.presentation_events}
+							events={presentation.presentation_events}
 							onEventClick={handleTimestampClick}
-							videoDuration={props.presentation.video_duration}
+							videoDuration={presentation.video_duration}
 						/>
 						<PresentationFeedbackSection
-							presentation={props.presentation}
-							feedbacks={props.feedbacks}
+							presentation={presentation}
+							feedbacks={feedbacks}
 							onTimestampClick={handleTimestampClick}
 						/>
 					</div>
@@ -86,43 +106,33 @@ function PresentationDetailsPage(props: PresentationDetailsPageProps) {
 								label="Description"
 								className="dark:text-white"
 								value={VideoTab.Description}
-								href={VideoTab.Description}
-								LinkComponent={Link}
 							/>
 							<Tab
 								label="Events"
 								className="dark:text-white"
 								value={VideoTab.Events}
-								href={VideoTab.Events}
-								LinkComponent={Link}
 							/>
 							<Tab
 								label="Transcription"
 								className="dark:text-white"
 								value={VideoTab.Transcription}
-								href={VideoTab.Transcription}
-								LinkComponent={Link}
 							/>
 						</Tabs>
 						<div className="overflow-y-auto max-h-[100vh] dark:bg-slate-800 rounded-lg p-4">
 							{value === VideoTab.Description && (
 								<PresentationDetails
-									presentation={props.presentation}
+									presentation={presentation}
 								/>
 							)}
 							{value === VideoTab.Events && (
 								<EventList
-									event={
-										props.presentation.presentation_events
-									}
+									event={presentation.presentation_events}
 									onEventClick={handleTimestampClick}
 								/>
 							)}
 							{value === VideoTab.Transcription && (
 								<TranscriptList
-									transcript={
-										props.presentation.transcription
-									}
+									transcript={presentation.transcription}
 									onTranscriptClick={handleTimestampClick}
 									videoTime={videoTime}
 								/>
@@ -136,68 +146,3 @@ function PresentationDetailsPage(props: PresentationDetailsPageProps) {
 }
 
 export default PresentationDetailsPage;
-
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-	const { access_token } = context.req.cookies;
-	const { courseId, presentationId } = context.params!;
-
-	if (!access_token) {
-		return {
-			redirect: {
-				destination: `/login?next=/courses/${courseId}/presentations/${presentationId}`,
-				permanent: false,
-			},
-		};
-	}
-
-	const response = await dataService.getPresentationById(
-		access_token,
-		presentationId as string
-	);
-
-	if (!response.ok && response.status === 401) {
-		return {
-			redirect: {
-				destination: `/login?next=/courses/${courseId}/presentations/${presentationId}`,
-				permanent: false,
-			},
-		};
-	};
-
-	if (!response.ok && response.status === 404) {
-		return {
-			notFound: true,
-		};
-	};
-
-	const presentation: Presentation = await response.json();
-
-	const feedbackResponse = await dataService.getFeedbacksByPresentationId(
-		access_token,
-		presentationId as string
-	);
-
-	if (!feedbackResponse.ok && feedbackResponse.status === 401) {
-		return {
-			redirect: {
-				destination: `/login?next=/courses/${courseId}/presentations/${presentationId}`,
-				permanent: false,
-			},
-		};
-	};
-
-	if (!feedbackResponse.ok && feedbackResponse.status === 404) {
-		return {
-			notFound: true,
-		};
-	};
-
-	const feedbacks: Feedback[] = await feedbackResponse.json();
-	
-	return {
-		props: {
-			presentation,
-			feedbacks,
-		},
-	};
-}

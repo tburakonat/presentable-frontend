@@ -1,4 +1,4 @@
-import { useAuth } from "@/context/AuthContext";
+import { useSession } from "@/context";
 import { Feedback, Presentation } from "@/types";
 import Link from "next/link";
 
@@ -9,7 +9,7 @@ interface IPresentationFeedbackSection {
 }
 
 function PresentationFeedbackSection(props: IPresentationFeedbackSection) {
-	const { user } = useAuth();
+	const { user } = useSession();
 	return (
 		<div className="mt-8 p-6 rounded-lg shadow-md dark:bg-slate-800">
 			<h2 className="text-xl font-bold mb-4">Feedback</h2>

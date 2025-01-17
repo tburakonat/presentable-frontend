@@ -1,15 +1,16 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/router";
-import { useAuth } from "@/context/AuthContext";
 import { useSearchParams } from "next/navigation";
+import { useSession } from "@/context";
 
 export default function LoginPage() {
+	const session = useSession();
 	const searchParams = useSearchParams();
 	const next = searchParams.get("next");
 
 	const router = useRouter();
-	const { login } = useAuth();
+	const { login } = useSession();
 	const [error, setError] = useState<string | null>(null);
 
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -18,9 +19,18 @@ export default function LoginPage() {
 		const formData = new FormData(e.currentTarget);
 		const username = formData.get("username");
 		const password = formData.get("password");
-		
+
 		try {
-			await login(username as string, password as string);
+			const isLoggedIn = await login(
+				username as string,
+				password as string
+			);
+
+			if (!isLoggedIn) {
+				setError("Invalid username or password");
+				return;
+			}
+
 			if (next) {
 				router.push(next);
 			} else {
@@ -31,6 +41,10 @@ export default function LoginPage() {
 			setError("Invalid username or password");
 		}
 	};
+
+	if (session.user) {
+		return router.push("/dashboard");
+	}
 
 	return (
 		<div className="flex flex-col items-center justify-center">

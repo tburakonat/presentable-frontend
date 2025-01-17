@@ -71,12 +71,8 @@ export type Template = {
 
 export enum StorageKey {
 	Templates = "presentable-feedback-editor-templates",
-    AuthFlag = "presentable-auth-flag",
-}
-
-export enum StorageValue {
-    AuthFlagTrue = "true",
-    AuthFlagFalse = "false",
+    AccessToken = "presentable-access-token",
+    RefreshToken = "presentable-refresh-token",
 }
 
 export enum VideoTab {
@@ -98,4 +94,5 @@ export type Presentation = {
 	created_by: User;
 	course: Course;
 	created_at: string;
+    is_private: boolean;
 };

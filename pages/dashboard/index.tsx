@@ -1,58 +1,40 @@
-import { useAuth } from "@/context/AuthContext";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Link from "next/link";
+import { useSession } from "@/context";
 
-export default function DashboardPage() {
-	const { user } = useAuth();
+const dashboardOptions = [
+	{
+		name: "View courses",
+		link: "/courses",
+	},
+	{
+		name: "View presentations",
+		link: "/presentations",
+	},
+	{
+		name: "View profile",
+		link: "/profile",
+	},
+];
 
-	const options = [
-		{
-			name: "View courses",
-			link: "/courses",
-		},
-		{
-			name: "View presentations",
-			link: "/presentations",
-		},
-		{
-			name: "View profile",
-			link: "/profile",
-		},
-	];
+function DashboardPage() {
+	const { user } = useSession();
 
 	return (
 		<div>
-			<h1 className="text-4xl mb-6">
-				Hello {user?.username}
-			</h1>
+			<h1 className="text-4xl mb-6">Hello {user?.username}</h1>
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                {options.map(option => (
-                    <Link
-                        key={option.link}
-                        href={option.link}
-                        className="p-4 shadow-md rounded-md bg-gray-100"
-                    >
-                        {option.name}
-                    </Link>
-                ))}
-            </div>
+				{dashboardOptions.map(option => (
+					<Link
+						key={option.link}
+						href={option.link}
+						className="p-4 shadow-md rounded-md bg-gray-100"
+					>
+						{option.name}
+					</Link>
+				))}
+			</div>
 		</div>
 	);
 }
 
-export const getServerSideProps = (async (context: GetServerSidePropsContext) => {
-	const { access_token } = context.req.cookies;
-
-	if (!access_token) {
-		return {
-			redirect: {
-				destination: "/login?next=/courses",
-				permanent: false,
-			},
-		};
-	}
-
-	return {
-		props: {},
-	};
-}) satisfies GetServerSideProps;
+export default DashboardPage;

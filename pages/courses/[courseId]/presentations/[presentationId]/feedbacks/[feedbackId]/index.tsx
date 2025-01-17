@@ -1,3 +1,7 @@
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { Box, Tab, Tabs } from "@mui/material";
+
 import {
 	CommentSection,
 	EventList,
@@ -7,33 +11,46 @@ import {
 	PresentationDetails,
 } from "@/components";
 import { useVideoTimestamp } from "@/hooks";
-import { Comment, Feedback, Presentation, VideoTab } from "@/types";
-import { Box, Tab, Tabs } from "@mui/material";
-import { GetServerSidePropsContext } from "next";
-import { useEffect, useState } from "react";
+import {
+	useFeedbackDetailsQuery,
+	usePresentationDetailsQuery,
+} from "@/helpers/queries";
+import { VideoTab } from "@/types";
+import { useSession } from "@/context";
 
-import Link from "next/link";
-import { dataService } from "@/services";
-
-interface PresentationFeedbackDetailsPageProps {
-	presentation: Presentation;
-	feedback: Feedback;
-	comments: Comment[];
-}
+interface PresentationFeedbackDetailsPageProps {}
 
 function PresentationFeedbackDetailsPage(
 	props: PresentationFeedbackDetailsPageProps
 ) {
+	const router = useRouter();
+	const { user } = useSession();
 	const videoRef = useVideoTimestamp();
 	const [videoTime, setVideoTime] = useState(0);
 	const [value, setValue] = useState(VideoTab.Description);
+	const [feedbackQuery, commentsQuery] = useFeedbackDetailsQuery(
+		router.query.feedbackId as string
+	);
 
-	useEffect(() => {
-		if (typeof window !== "undefined") {
-			const hash = window.location.hash as VideoTab;
-			setValue(hash || VideoTab.Description);
-		}
-	}, []);
+	if (!user) {
+		return <p>User not found</p>;
+	}
+
+	if (feedbackQuery.isLoading || commentsQuery.isLoading) {
+		return <p>Loading...</p>;
+	}
+
+	if (feedbackQuery.error || commentsQuery.error) {
+		return <p>{feedbackQuery.error?.message}</p>;
+	}
+
+	const feedback = feedbackQuery.data?.data;
+	const presentation = feedback?.presentation;
+	const comments = commentsQuery.data?.data ?? [];
+
+	if (!presentation) {
+		return <p>Presentation not found</p>;
+	}
 
 	const handleTimeUpdate = () => {
 		if (videoRef.current) {
@@ -59,31 +76,31 @@ function PresentationFeedbackDetailsPage(
 						className="w-full rounded-lg border border-gray-300 shadow-sm"
 						onTimeUpdate={handleTimeUpdate}
 					>
-						<source
-							src={props.presentation.video_url}
-							type="video/mp4"
-						/>
+						<source src={presentation.video_url} type="video/mp4" />
 						Your browser does not support the video tag.
 					</video>
 					<EventsTimeline
-						events={props.presentation.presentation_events}
+						events={presentation.presentation_events}
 						onEventClick={handleTimestampClick}
-						videoDuration={props.presentation.video_duration}
+						videoDuration={presentation.video_duration}
 					/>
-					<div className="mt-8 p-6 rounded-lg shadow-md dark:bg-slate-800">
-						<h2 className="text-xl font-bold mb-4">Feedback</h2>
-						<FeedbackContent
-							feedback={props.feedback.content}
-							onTimestampClick={handleTimestampClick}
-						/>
-						<p className="text-sm text-gray-500">
-							By {props.feedback.created_by.first_name}{" "}
-							{props.feedback.created_by.last_name} on{" "}
-							{new Date(
-								props.feedback.created_at
-							).toLocaleDateString("de-DE")}
-						</p>
-					</div>
+
+					{feedback && (
+						<div className="mt-8 p-6 rounded-lg shadow-md dark:bg-slate-800">
+							<h2 className="text-xl font-bold mb-4">Feedback</h2>
+							<FeedbackContent
+								feedback={feedback.content}
+								onTimestampClick={handleTimestampClick}
+							/>
+							<p className="text-sm text-gray-500">
+								By {feedback.created_by.first_name}{" "}
+								{feedback.created_by.last_name} on{" "}
+								{new Date(
+									feedback.created_at
+								).toLocaleDateString("de-DE")}
+							</p>
+						</div>
+					)}
 				</div>
 
 				{/* Right Column: Description, Transcription, Events, Comments */}
@@ -93,53 +110,43 @@ function PresentationFeedbackDetailsPage(
 							label="Description"
 							className="dark:text-white"
 							value={VideoTab.Description}
-							href={VideoTab.Description}
-							LinkComponent={Link}
 						/>
 						<Tab
 							label="Events"
 							className="dark:text-white"
 							value={VideoTab.Events}
-							href={VideoTab.Events}
-							LinkComponent={Link}
 						/>
 						<Tab
 							label="Transcription"
 							className="dark:text-white"
 							value={VideoTab.Transcription}
-							href={VideoTab.Transcription}
-							LinkComponent={Link}
 						/>
 						<Tab
 							label="Comments"
 							className="dark:text-white"
 							value={VideoTab.Comments}
-							href={VideoTab.Comments}
-							LinkComponent={Link}
 						/>
 					</Tabs>
 					<Box p={2} className="overflow-y-auto max-h-[100vh]">
 						{value === VideoTab.Description && (
-							<PresentationDetails
-								presentation={props.presentation}
-							/>
+							<PresentationDetails presentation={presentation} />
 						)}
 						{value === VideoTab.Events && (
 							<EventList
-								event={props.presentation.presentation_events}
+								event={presentation.presentation_events}
 								onEventClick={handleTimestampClick}
 							/>
 						)}
 						{value === VideoTab.Transcription && (
 							<TranscriptList
-								transcript={props.presentation.transcription}
+								transcript={presentation.transcription}
 								onTranscriptClick={handleTimestampClick}
 								videoTime={videoTime}
 							/>
 						)}
 						{value === VideoTab.Comments && (
 							<CommentSection
-								comments={props.comments}
+								comments={comments}
 								onTimestampClick={handleTimestampClick}
 							/>
 						)}
@@ -151,63 +158,3 @@ function PresentationFeedbackDetailsPage(
 }
 
 export default PresentationFeedbackDetailsPage;
-
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-	const { access_token } = context.req.cookies;
-	const { presentationId, feedbackId } = context.params!;
-
-	if (!access_token) {
-		return {
-			redirect: {
-				destination: `/login?next=/presentations/${presentationId}/feedbacks/${feedbackId}`,
-				permanent: false,
-			},
-		};
-	}
-
-	const response = await dataService.getFeedbackById(
-		access_token,
-		feedbackId as string
-	);
-
-	if (!response.ok && response.status === 401) {
-		return {
-			redirect: {
-				destination: `/login?next=/presentations/${presentationId}/feedbacks/${feedbackId}`,
-				permanent: false,
-			},
-		};
-	}
-
-	if (!response.ok && response.status === 404) {
-		return {
-			notFound: true,
-		};
-	}
-
-	const feedback = await response.json();
-
-	const commentsResponse = await dataService.getCommentsByFeedbackId(
-		access_token,
-		feedbackId as string
-	);
-
-	if (!commentsResponse.ok && commentsResponse.status === 401) {
-		return {
-			redirect: {
-				destination: `/login?next=/presentations/${presentationId}/feedbacks/${feedbackId}`,
-				permanent: false,
-			},
-		};
-	}
-
-	const comments = await commentsResponse.json();
-
-	return {
-		props: {
-			feedback,
-			presentation: feedback.presentation,
-			comments,
-		},
-	};
-}

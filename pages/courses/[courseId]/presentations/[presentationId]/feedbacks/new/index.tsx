@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { Tabs, Tab, Box } from "@mui/material";
+
 import {
 	Editor,
 	EventList,
@@ -7,30 +10,39 @@ import {
 } from "@/components";
 import { useVideoTimestamp } from "@/hooks";
 import { Presentation, VideoTab } from "@/types";
-import { Tabs, Tab, Box } from "@mui/material";
-import { GetServerSidePropsContext } from "next";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { dataService } from "@/services";
+import { usePresentationQuery } from "@/helpers/queries";
+import { useRouter } from "next/router";
+import { useSession } from "@/context";
 
-
-interface CreateFeedbackPageProps {
-	presentation: Presentation;
-}
+interface CreateFeedbackPageProps {}
 
 export default function CreateFeedbackPage(props: CreateFeedbackPageProps) {
+	const router = useRouter();
+	const { user } = useSession();
 	const videoRef = useVideoTimestamp();
 	const [value, setValue] = useState(VideoTab.Description);
-
-	useEffect(() => {
-		if (typeof window !== "undefined") {
-		  const hash = window.location.hash as VideoTab;
-		  setValue(hash || VideoTab.Description);
-		}
-	}, []);
-
-
 	const [videoTime, setVideoTime] = useState(0);
+	const presentationQuery = usePresentationQuery(
+		router.query.presentationId as string
+	);
+
+	if (!user) {
+		return <p>User not found</p>;
+	}
+
+	if (presentationQuery.isLoading) {
+		return <p>Loading...</p>;
+	}
+
+	if (presentationQuery.error) {
+		return <p>{presentationQuery.error?.message}</p>;
+	}
+
+	const presentation = presentationQuery.data?.data;
+
+	if (!presentation) {
+		return <p>Presentation not found</p>;
+	}
 
 	const handleTimeUpdate = () => {
 		if (videoRef.current) {
@@ -59,16 +71,13 @@ export default function CreateFeedbackPage(props: CreateFeedbackPageProps) {
 						className="w-full rounded-lg border border-gray-300 shadow-sm"
 						onTimeUpdate={handleTimeUpdate}
 					>
-						<source
-							src={props.presentation.video_url}
-							type="video/mp4"
-						/>
+						<source src={presentation.video_url} type="video/mp4" />
 						Your browser does not support the video tag.
 					</video>
 					<EventsTimeline
-						events={props.presentation.presentation_events}
+						events={presentation.presentation_events}
 						onEventClick={handleTimestampClick}
-						videoDuration={props.presentation.video_duration}
+						videoDuration={presentation.video_duration}
 					/>
 					<Editor />
 					<button
@@ -87,37 +96,31 @@ export default function CreateFeedbackPage(props: CreateFeedbackPageProps) {
 							label="Description"
 							className="dark:text-white"
 							value={VideoTab.Description}
-							href={VideoTab.Description}
-							LinkComponent={Link}
 						/>
 						<Tab
 							label="Events"
 							className="dark:text-white"
 							value={VideoTab.Events}
-							href={VideoTab.Events}
-							LinkComponent={Link}
 						/>
 						<Tab
 							label="Transcription"
 							className="dark:text-white"
 							value={VideoTab.Transcription}
-							href={VideoTab.Transcription}
-							LinkComponent={Link}
 						/>
 					</Tabs>
 					<Box p={2} className="overflow-y-auto max-h-[100vh]">
 						{value === VideoTab.Description && (
-							<PresentationDetails presentation={props.presentation} />
+							<PresentationDetails presentation={presentation} />
 						)}
 						{value === VideoTab.Events && (
 							<EventList
-								event={props.presentation.presentation_events}
+								event={presentation.presentation_events}
 								onEventClick={handleTimestampClick}
 							/>
 						)}
 						{value === VideoTab.Transcription && (
 							<TranscriptList
-								transcript={props.presentation.transcription}
+								transcript={presentation.transcription}
 								onTranscriptClick={handleTimestampClick}
 								videoTime={videoTime}
 							/>
@@ -125,50 +128,6 @@ export default function CreateFeedbackPage(props: CreateFeedbackPageProps) {
 					</Box>
 				</div>
 			</div>
-
-			<div className="space-y-4"></div>
 		</div>
 	);
-}
-
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-	const { access_token } = context.req.cookies;
-	const { courseId, presentationId } = context.params!;
-
-	if (!access_token) {
-		return {
-			redirect: {
-				destination: `/login?next=/courses/${courseId}/presentations/${presentationId}/feedbacks/new`,
-				permanent: false,
-			},
-		};
-	}
-
-	const response = await dataService.getPresentationById(
-		access_token,
-		presentationId as string
-	);
-
-	if (!response.ok && response.status === 401) {
-		return {
-			redirect: {
-				destination: `/login?next=/courses/${courseId}/presentations/${presentationId}/feedbacks/new`,
-				permanent: false,
-			},
-		};
-	};
-
-	if (!response.ok && response.status === 404) {
-		return {
-			notFound: true,
-		};
-	};
-
-	const presentation: Presentation = await response.json();
-
-	return {
-		props: {
-			presentation,
-		},
-	};
 }

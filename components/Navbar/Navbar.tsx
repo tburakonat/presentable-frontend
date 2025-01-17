@@ -1,13 +1,13 @@
-import { useAuth } from "@/context/AuthContext";
+import { useSession } from "@/context";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 export default function Navbar() {
 	const router = useRouter();
-	const { user, isAuthenticated, logout } = useAuth();
+	const { user, logout } = useSession();
 
 	const handleLogout = async () => {
-		await logout();
+		logout();
 		router.push("/login");
 	};
 
@@ -23,7 +23,7 @@ export default function Navbar() {
 			</div>
 
 			<div>
-				{isAuthenticated ? (
+				{user?.id ? (
 					<>
 						<Link
 							className="mr-6 text-lg font-medium hover:text-gray-600 transition-colors"
