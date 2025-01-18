@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { useSession } from "@/context";
+import { withAuth } from "@/components";
 
 const dashboardOptions = [
 	{
@@ -17,8 +18,11 @@ const dashboardOptions = [
 ];
 
 function DashboardPage() {
-	const { user } = useSession();
+	const { user, isLoading } = useSession();
 
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
 	return (
 		<div>
 			<h1 className="text-4xl mb-6">Hello {user?.username}</h1>
@@ -37,4 +41,4 @@ function DashboardPage() {
 	);
 }
 
-export default DashboardPage;
+export default withAuth(DashboardPage);

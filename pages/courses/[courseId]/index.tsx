@@ -4,10 +4,11 @@ import { useRouter } from "next/router";
 
 import { useSession } from "@/context";
 import { useCourseDetailsQuery } from "@/helpers/queries";
+import { withAuth } from "@/components";
 
 interface CourseDetailsPageProps {}
 
-export default function CourseDetailsPage(props: CourseDetailsPageProps) {
+function CourseDetailsPage(props: CourseDetailsPageProps) {
 	const { user } = useSession();
 	const router = useRouter();
 
@@ -32,10 +33,6 @@ export default function CourseDetailsPage(props: CourseDetailsPageProps) {
 
 	if (!course) {
 		return <p>Course not found</p>;
-	}
-
-	if (!user) {
-		return <p>User not found</p>;
 	}
 
 	const myPresentations = presentations
@@ -106,3 +103,5 @@ export default function CourseDetailsPage(props: CourseDetailsPageProps) {
 		</>
 	);
 }
+
+export default withAuth(CourseDetailsPage);

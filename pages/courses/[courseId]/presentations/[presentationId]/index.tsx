@@ -12,24 +12,19 @@ import {
 	EventList,
 	TranscriptList,
 	EventsTimeline,
+	withAuth,
 } from "@/components";
-import { useSession } from "@/context";
 
 interface PresentationDetailsPageProps {}
 
 function PresentationDetailsPage(props: PresentationDetailsPageProps) {
 	const router = useRouter();
 	const videoRef = useVideoTimestamp();
-	const { user } = useSession();
 	const [videoTime, setVideoTime] = useState(0);
 	const [value, setValue] = useState(VideoTab.Description);
 	const [presentationQuery, feedbacksQuery] = usePresentationDetailsQuery(
 		router.query.presentationId as string
 	);
-
-	if (!user) {
-		return <p>User not found</p>;
-	}
 
 	if (presentationQuery.isLoading || feedbacksQuery.isLoading) {
 		return <p>Loading...</p>;
@@ -145,4 +140,4 @@ function PresentationDetailsPage(props: PresentationDetailsPageProps) {
 	);
 }
 
-export default PresentationDetailsPage;
+export default withAuth(PresentationDetailsPage);

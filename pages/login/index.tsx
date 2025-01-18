@@ -3,8 +3,9 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/router";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "@/context";
+import { withoutAuth } from "@/components";
 
-export default function LoginPage() {
+function LoginPage() {
 	const session = useSession();
 	const searchParams = useSearchParams();
 	const next = searchParams.get("next");
@@ -98,3 +99,5 @@ export default function LoginPage() {
 		</div>
 	);
 }
+
+export default withoutAuth(LoginPage);

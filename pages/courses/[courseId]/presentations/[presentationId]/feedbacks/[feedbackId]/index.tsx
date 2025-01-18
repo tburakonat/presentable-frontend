@@ -9,14 +9,11 @@ import {
 	FeedbackContent,
 	TranscriptList,
 	PresentationDetails,
+	withAuth,
 } from "@/components";
 import { useVideoTimestamp } from "@/hooks";
-import {
-	useFeedbackDetailsQuery,
-	usePresentationDetailsQuery,
-} from "@/helpers/queries";
+import { useFeedbackDetailsQuery } from "@/helpers/queries";
 import { VideoTab } from "@/types";
-import { useSession } from "@/context";
 
 interface PresentationFeedbackDetailsPageProps {}
 
@@ -24,17 +21,12 @@ function PresentationFeedbackDetailsPage(
 	props: PresentationFeedbackDetailsPageProps
 ) {
 	const router = useRouter();
-	const { user } = useSession();
 	const videoRef = useVideoTimestamp();
 	const [videoTime, setVideoTime] = useState(0);
 	const [value, setValue] = useState(VideoTab.Description);
 	const [feedbackQuery, commentsQuery] = useFeedbackDetailsQuery(
 		router.query.feedbackId as string
 	);
-
-	if (!user) {
-		return <p>User not found</p>;
-	}
 
 	if (feedbackQuery.isLoading || commentsQuery.isLoading) {
 		return <p>Loading...</p>;
@@ -157,4 +149,4 @@ function PresentationFeedbackDetailsPage(
 	);
 }
 
-export default PresentationFeedbackDetailsPage;
+export default withAuth(PresentationFeedbackDetailsPage);

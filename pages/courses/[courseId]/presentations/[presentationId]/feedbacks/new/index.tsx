@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { Tabs, Tab, Box } from "@mui/material";
 
@@ -7,28 +8,22 @@ import {
 	EventsTimeline,
 	TranscriptList,
 	PresentationDetails,
+	withAuth,
 } from "@/components";
 import { useVideoTimestamp } from "@/hooks";
-import { Presentation, VideoTab } from "@/types";
+import { VideoTab } from "@/types";
 import { usePresentationQuery } from "@/helpers/queries";
-import { useRouter } from "next/router";
-import { useSession } from "@/context";
 
 interface CreateFeedbackPageProps {}
 
-export default function CreateFeedbackPage(props: CreateFeedbackPageProps) {
+function CreateFeedbackPage(props: CreateFeedbackPageProps) {
 	const router = useRouter();
-	const { user } = useSession();
 	const videoRef = useVideoTimestamp();
 	const [value, setValue] = useState(VideoTab.Description);
 	const [videoTime, setVideoTime] = useState(0);
 	const presentationQuery = usePresentationQuery(
 		router.query.presentationId as string
 	);
-
-	if (!user) {
-		return <p>User not found</p>;
-	}
 
 	if (presentationQuery.isLoading) {
 		return <p>Loading...</p>;
@@ -131,3 +126,5 @@ export default function CreateFeedbackPage(props: CreateFeedbackPageProps) {
 		</div>
 	);
 }
+
+export default withAuth(CreateFeedbackPage);

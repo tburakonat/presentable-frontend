@@ -3,14 +3,11 @@ import Link from "next/link";
 
 import { useSession } from "@/context";
 import { useCoursesQuery } from "@/helpers/queries";
+import { withAuth } from "@/components";
 
 function CoursesPage() {
 	const { isLoading, error, data: courses } = useCoursesQuery();
 	const { user } = useSession();
-
-	if (!user) {
-		return <p>No user found</p>;
-	}
 
 	if (isLoading) {
 		return <p>Loading...</p>;
@@ -93,4 +90,4 @@ function CoursesPage() {
 	);
 }
 
-export default CoursesPage;
+export default withAuth(CoursesPage);

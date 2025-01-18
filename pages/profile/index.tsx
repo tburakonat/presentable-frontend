@@ -1,6 +1,7 @@
+import { withAuth } from "@/components";
 import { useSession } from "@/context";
 
-export default function ProfilePage() {
+function ProfilePage() {
 	const { user } = useSession();
 
 	return (
@@ -14,3 +15,5 @@ export default function ProfilePage() {
 		</div>
 	);
 }
+
+export default withAuth(ProfilePage);
