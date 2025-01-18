@@ -6,8 +6,16 @@ import styles from "./Editor.module.css";
 import { useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { StorageKey, Template } from "@/types";
+import { NodeHtmlMarkdown } from "node-html-markdown";
+import { useCreateFeedbackMutation } from "@/helpers/mutations";
+import { useRouter } from "next/router";
 
-export default function Editor() {
+interface IEditorProps {
+	presentationId: number;
+}
+
+export default function Editor(props: IEditorProps) {
+	const router = useRouter();
 	const [templates, setTemplates] = useLocalStorage<Template[]>(
 		StorageKey.Templates,
 		[
@@ -20,18 +28,18 @@ export default function Editor() {
 		]
 	);
 
+	const { mutateAsync } = useCreateFeedbackMutation(props.presentationId);
+
 	const editor = useEditor({
 		immediatelyRender: false,
 		extensions: [StarterKit, Link],
 		content: templates[0]?.content ?? "",
 	});
 
-	function processHTMLContent(htmlContent: string) {
+	const processHTMLContent = (htmlContent: string) => {
 		// Erzeuge ein DOM-Parser-Objekt
 		const parser = new DOMParser();
 		const doc = parser.parseFromString(htmlContent, "text/html");
-
-		console.log("doc", doc);
 
 		// Alle Texte im HTML-Dokument durchgehen
 		const walker = document.createTreeWalker(
@@ -56,7 +64,11 @@ export default function Editor() {
 				(match, minutes, seconds) => {
 					const totalSeconds =
 						parseInt(minutes) * 60 + parseInt(seconds);
-					return `<a href="#t=${totalSeconds}s">${match}</a>`;
+					const currentPath = router.asPath;
+					const updatedPath = `${
+						currentPath.split("?")[0]
+					}?t=${totalSeconds}`;
+					return `<a href="?t=${totalSeconds}">${match}</a>`;
 				}
 			);
 
@@ -73,20 +85,27 @@ export default function Editor() {
 
 		// Den aktualisierten HTML-Inhalt zurückgeben
 		return doc.body.innerHTML;
-	}
+	};
 
-	useEffect(() => {
-		if (!editor) {
-			return;
+	// TODO: Timestamps sollen den richtigen Link erhalten
+	// TODO: Probleme mit dem Speichern von Feedback mit Emojis beheben
+	const handleSubmit = async (e: React.FormEvent) => {
+		if (!editor) return;
+
+		const htmlContent = editor.getHTML();
+		const processedContent = processHTMLContent(htmlContent);
+		const markdown = NodeHtmlMarkdown.translate(processedContent);
+		try {
+			const response = await mutateAsync(markdown);
+			const feedback = response.data;
+			const { courseId, presentationId } = router.query;
+			router.push(
+				`/courses/${courseId}/presentations/${presentationId}/feedbacks/${feedback.id}`
+			);
+		} catch (error) {
+			console.error(error);
 		}
-
-		// Event-Listener für das "update" Ereignis hinzufügen
-		editor.on("blur", ({ editor }) => {
-			const htmlContent = editor.getHTML();
-			const processedContent = processHTMLContent(htmlContent);
-			console.log(processedContent);
-		});
-	}, [editor]);
+	};
 
 	return (
 		<div className={styles.editorContainer}>
@@ -96,6 +115,13 @@ export default function Editor() {
 				setTemplates={setTemplates}
 			/>
 			<EditorContent editor={editor} />
+			<button
+				type="submit"
+				className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 self-start"
+				onClick={handleSubmit}
+			>
+				Submit Feedback
+			</button>
 		</div>
 	);
 }

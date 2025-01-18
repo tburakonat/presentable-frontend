@@ -14,6 +14,7 @@ import {
 import { useVideoTimestamp } from "@/hooks";
 import { useFeedbackDetailsQuery } from "@/helpers/queries";
 import { VideoTab } from "@/types";
+import { userAgent } from "next/server";
 
 interface PresentationFeedbackDetailsPageProps {}
 
@@ -138,6 +139,7 @@ function PresentationFeedbackDetailsPage(
 						)}
 						{value === VideoTab.Comments && (
 							<CommentSection
+								feedback={feedback}
 								comments={comments}
 								onTimestampClick={handleTimestampClick}
 							/>

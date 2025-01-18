@@ -45,10 +45,6 @@ function CreateFeedbackPage(props: CreateFeedbackPageProps) {
 		}
 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-	};
-
 	const handleTimestampClick = (time: number) => {
 		if (videoRef.current) {
 			videoRef.current.currentTime = time;
@@ -74,14 +70,7 @@ function CreateFeedbackPage(props: CreateFeedbackPageProps) {
 						onEventClick={handleTimestampClick}
 						videoDuration={presentation.video_duration}
 					/>
-					<Editor />
-					<button
-						type="submit"
-						className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 self-start"
-						onClick={handleSubmit}
-					>
-						Submit Feedback
-					</button>
+					<Editor presentationId={presentation.id} />
 				</div>
 
 				{/* Right Column: Tabs for Description, Transcription, Events */}
