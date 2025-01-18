@@ -60,6 +60,16 @@ export default {
 				method: "GET",
 			});
 		},
+		changeVisibility: async (
+			presentationId: number,
+			is_private: boolean
+		) => {
+			return apiClient.request<Presentation>({
+				url: `/presentations/${presentationId}/`,
+				method: "PATCH",
+				data: { is_private },
+			});
+		},
 	},
 	feedbacks: {
 		getOne: async (id: string) => {
@@ -74,12 +84,51 @@ export default {
 				method: "GET",
 			});
 		},
+		create: async (
+			content: string,
+			presentationId: number,
+			userId: number
+		) => {
+			return apiClient.request<Feedback>({
+				url: "/feedbacks/",
+				method: "POST",
+				data: {
+					content,
+					presentation: presentationId,
+					created_by: userId,
+				},
+			});
+		},
+		delete: async (id: number) => {
+			return apiClient.request({
+				url: `/feedbacks/${id}/`,
+				method: "DELETE",
+			});
+		},
 	},
 	comments: {
 		getByFeedback: async (feedbackId: string) => {
 			return apiClient.request<Comment[]>({
 				url: `/comments/?feedback=${feedbackId}`,
 				method: "GET",
+			});
+		},
+		create: async (
+			content: string,
+			feedback: number,
+			created_by: number
+		) => {
+			const response = await apiClient.request<Comment>({
+				url: "/comments/",
+				method: "POST",
+				data: { content, feedback, created_by },
+			});
+			return response;
+		},
+		delete: async (id: number) => {
+			return apiClient.request({
+				url: `/comments/${id}/`,
+				method: "DELETE",
 			});
 		},
 	},
