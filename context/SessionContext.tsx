@@ -14,6 +14,7 @@ interface SessionContextData {
 	login: (username: string, password: string) => Promise<boolean>;
 	logout: () => void;
 	user: User | null;
+	isLoading: boolean;
 }
 
 interface SessionProviderProps extends PropsWithChildren {
@@ -24,6 +25,7 @@ const SessionContext = createContext<SessionContextData | undefined>(undefined);
 
 export function SessionProvider({ children }: SessionProviderProps) {
 	const [user, setUser] = useState<User | null>(null);
+	const [isLoading, setIsLoading] = useState(true);
 	const [accessToken, setAccessToken] = useLocalStorage<string | undefined>(
 		StorageKey.AccessToken,
 		undefined
@@ -31,11 +33,14 @@ export function SessionProvider({ children }: SessionProviderProps) {
 
 	const login = async (username: string, password: string) => {
 		try {
+			setIsLoading(true);
 			const response = await API.session.login(username, password);
 			setAccessToken(response.data.access);
 			return true;
 		} catch (error) {
 			return false;
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -69,16 +74,21 @@ export function SessionProvider({ children }: SessionProviderProps) {
 			}
 		} catch (error) {
 			console.error(error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	useEffect(() => {
-		if (!accessToken) return;
+		if (!accessToken) {
+			setIsLoading(false);
+			return;
+		}
 		initializeSession(accessToken);
 	}, [accessToken]);
 
 	return (
-		<SessionContext.Provider value={{ login, logout, user }}>
+		<SessionContext.Provider value={{ login, logout, user, isLoading }}>
 			{children}
 		</SessionContext.Provider>
 	);
