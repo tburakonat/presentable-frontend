@@ -1,6 +1,7 @@
 import { Presentation } from "@/types";
 import { Tooltip } from "../Tooltip";
 import { useSession } from "@/context";
+import { useChangeVisibilityMutation } from "@/helpers/mutations";
 
 interface IPresentationDetailsProps {
 	presentation: Presentation;
@@ -8,10 +9,11 @@ interface IPresentationDetailsProps {
 
 function PresentationDetails({ presentation }: IPresentationDetailsProps) {
 	const { user } = useSession();
+	const { mutate } = useChangeVisibilityMutation(presentation.id);
 
 	const changeVisibility = async () => {
 		try {
-			// Update the presentation visibility
+			mutate(!presentation.is_private);
 		} catch (error) {
 			console.log(error);
 		}
