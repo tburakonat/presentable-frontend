@@ -3,11 +3,13 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import { Menubar } from "@/components";
 import styles from "./Editor.module.css";
-import { useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { StorageKey, Template } from "@/types";
 import { NodeHtmlMarkdown } from "node-html-markdown";
-import { useCreateFeedbackMutation } from "@/helpers/mutations";
+import {
+	useCreateFeedbackMutation,
+	useEditFeedbackMutation,
+} from "@/helpers/mutations";
 import { useRouter } from "next/router";
 
 interface IEditorProps {
@@ -16,6 +18,7 @@ interface IEditorProps {
 
 export default function Editor(props: IEditorProps) {
 	const router = useRouter();
+	const { courseId, presentationId } = router.query;
 	const [templates, setTemplates] = useLocalStorage<Template[]>(
 		StorageKey.Templates,
 		[
@@ -28,7 +31,10 @@ export default function Editor(props: IEditorProps) {
 		]
 	);
 
-	const { mutateAsync } = useCreateFeedbackMutation(props.presentationId);
+	const { mutateAsync: editFeedback } = useEditFeedbackMutation();
+	const { mutateAsync: createFeedback } = useCreateFeedbackMutation(
+		props.presentationId
+	);
 
 	const editor = useEditor({
 		immediatelyRender: false,
@@ -36,22 +42,23 @@ export default function Editor(props: IEditorProps) {
 		content: templates[0]?.content ?? "",
 	});
 
-	const processHTMLContent = (htmlContent: string) => {
+	const convertTimestampsToLinks = (htmlContent: string) => {
 		// Erzeuge ein DOM-Parser-Objekt
 		const parser = new DOMParser();
 		const doc = parser.parseFromString(htmlContent, "text/html");
 
-		// Alle Texte im HTML-Dokument durchgehen
+		// Erzeuge einen TreeWalker, um alle Textknoten zu durchlaufen
 		const walker = document.createTreeWalker(
 			doc.body,
 			NodeFilter.SHOW_TEXT,
 			null
 		);
 
-		let node;
 		// Regex für Timestamps (z. B. 02:13)
 		const timestampRegex = /\b(\d{1,2}):(\d{2})\b/g;
 
+		let node;
+		// Alle Textknoten durchgehen
 		while ((node = walker.nextNode())) {
 			const textContent = node.nodeValue;
 			if (!textContent) {
@@ -68,10 +75,12 @@ export default function Editor(props: IEditorProps) {
 					const updatedPath = `${
 						currentPath.split("?")[0]
 					}?t=${totalSeconds}`;
-					return `<a href="?t=${totalSeconds}">${match}</a>`;
+
+					return `<a href="${updatedPath}">${match}</a>`;
 				}
 			);
 
+			// Falls der Text aktualisiert wurde, ersetze den alten Knoten durch den neuen
 			if (updatedContent !== textContent) {
 				if (!node.parentNode) {
 					continue;
@@ -87,18 +96,47 @@ export default function Editor(props: IEditorProps) {
 		return doc.body.innerHTML;
 	};
 
-	// TODO: Timestamps sollen den richtigen Link erhalten
+	const addCorrectHrefsToLinks = (content: string, feedbackURL: string) => {
+		// Regex für Timestamps (z. B. [1:20](/courses/1/presentations/1/feedbacks/new?t=80))
+		const timestampRegex =
+			/\[(\d{1,2}:\d{2})\]\((\/courses\/\d+\/presentations\/\d+\/feedbacks\/new\?t=\d+)\)/g;
+
+		// Ersetze die Timestamps durch Links mit der richtigen href-URL
+		return content.replace(timestampRegex, (match, timestamp, href) => {
+			const totalSeconds =
+				parseInt(timestamp.split(":")[0]) * 60 +
+				parseInt(timestamp.split(":")[1]);
+			return `[${timestamp}](${feedbackURL}?t=${totalSeconds})`;
+		});
+	};
+
 	// TODO: Probleme mit dem Speichern von Feedback mit Emojis beheben
 	const handleSubmit = async (e: React.FormEvent) => {
 		if (!editor) return;
 
 		const htmlContent = editor.getHTML();
-		const processedContent = processHTMLContent(htmlContent);
+		const processedContent = convertTimestampsToLinks(htmlContent);
 		const markdown = NodeHtmlMarkdown.translate(processedContent);
+
 		try {
-			const response = await mutateAsync(markdown);
+			// 1. POST the feedback to the backend (hrefs are not correct yet because the feedback ID is not known. It looks like this: /courses/1/presentations/1/feedbacks/new?t=80)
+			const response = await createFeedback(markdown);
 			const feedback = response.data;
-			const { courseId, presentationId } = router.query;
+
+			// 2. PATCH the feedback content to add the correct hrefs to the timestamp links
+			const feedbackLink = `/courses/${courseId}/presentations/${presentationId}/feedbacks/${feedback.id}`;
+
+			const updatedFeedbackContent = addCorrectHrefsToLinks(
+				feedback.content,
+				feedbackLink
+			);
+
+			await editFeedback({
+				feedbackId: feedback.id,
+				content: updatedFeedbackContent,
+			});
+
+			// 3. Redirect to the feedback page
 			router.push(
 				`/courses/${courseId}/presentations/${presentationId}/feedbacks/${feedback.id}`
 			);

@@ -105,6 +105,13 @@ export default {
 				method: "DELETE",
 			});
 		},
+		edit: async (id: number, content: string) => {
+			return apiClient.request<Feedback>({
+				url: `/feedbacks/${id}/`,
+				method: "PATCH",
+				data: { content },
+			});
+		},
 	},
 	comments: {
 		getByFeedback: async (feedbackId: string) => {

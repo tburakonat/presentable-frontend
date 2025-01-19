@@ -37,3 +37,15 @@ export const useDeleteFeedbackMutation = () => {
 		mutationFn: (feedbackId: number) => api.feedbacks.delete(feedbackId),
 	});
 };
+
+export const useEditFeedbackMutation = () => {
+	return useMutation({
+		mutationFn: ({
+			feedbackId,
+			content,
+		}: {
+			feedbackId: number;
+			content: string;
+		}) => api.feedbacks.edit(feedbackId, content),
+	});
+};
