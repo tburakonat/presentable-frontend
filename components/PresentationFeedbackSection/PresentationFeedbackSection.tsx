@@ -2,6 +2,7 @@ import { useSession } from "@/context";
 import { useDeleteFeedbackMutation } from "@/helpers/mutations";
 import { Feedback, Presentation } from "@/types";
 import Link from "next/link";
+import { FeedbackContent } from "../FeedbackContent";
 
 interface IPresentationFeedbackSection {
 	presentation: Presentation;
@@ -65,8 +66,15 @@ function PresentationFeedbackSection(props: IPresentationFeedbackSection) {
 							<p className="text-sm text-gray-500">
 								By {fb.created_by.first_name}{" "}
 								{fb.created_by.last_name} on{" "}
-								{new Date(fb.created_at).toLocaleDateString(
-									"de-DE"
+								{new Date(fb.created_at).toLocaleString(
+									"de-DE",
+									{
+										day: "2-digit",
+										month: "2-digit",
+										year: "numeric",
+										hour: "2-digit",
+										minute: "2-digit",
+									}
 								)}
 							</p>
 						</div>
