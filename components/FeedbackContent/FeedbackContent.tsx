@@ -14,7 +14,7 @@ export default function FeedbackContent(props: IFeedbackProps) {
         const { href, children, ...rest } = data;
         const timestampPattern = /^\d{1,2}:\d{2}$/;
             
-        if (timestampPattern.test(data.children?.toString() || "") && !href) {
+        if (timestampPattern.test(data.children?.toString() || "")) {
             return (
                 <Timestamp 
                     timestamp={data.children as string}
