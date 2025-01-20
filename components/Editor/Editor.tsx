@@ -11,6 +11,7 @@ import {
 	useEditFeedbackMutation,
 } from "@/helpers/mutations";
 import { useRouter } from "next/router";
+import { editorAtom, editorStore } from "@/atoms";
 
 interface IEditorProps {
 	presentationId: number;
@@ -40,6 +41,7 @@ export default function Editor(props: IEditorProps) {
 		immediatelyRender: false,
 		extensions: [StarterKit, Link],
 		content: templates[0]?.content ?? "",
+		onCreate: ({ editor }) => editorStore.set(editorAtom, editor),
 	});
 
 	const convertTimestampsToLinks = (htmlContent: string) => {

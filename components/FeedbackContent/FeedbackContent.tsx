@@ -2,7 +2,7 @@ import ReactMarkdown, { ExtraProps } from "react-markdown";
 import { Timestamp } from "@/components";
 import Link from 'next/link';
 import styles from "./FeedbackContent.module.css";
-import { AnchorHTMLAttributes, ClassAttributes } from "react";
+import { AnchorHTMLAttributes, ClassAttributes, QuoteHTMLAttributes } from "react";
 
 interface IFeedbackProps {
     feedback: string;
@@ -35,13 +35,25 @@ export default function FeedbackContent(props: IFeedbackProps) {
         );
     }
 
+    const renderBlockquote = (data: ClassAttributes<HTMLQuoteElement> & QuoteHTMLAttributes<HTMLQuoteElement> & ExtraProps) => {
+        const { children } = data;
+        return (
+            <blockquote className="border-l-4 border-blue-400 pl-4 my-4">
+                {children}
+            </blockquote>
+        );
+    };
+
     function convertLineBreaks(content: string) {
         return content.replace(/\\n/g, '\n'); // i need this because the backend saves the feedback with \\n instead of \n
     }
 
     return (
         <ReactMarkdown 
-            components={{ a: renderLinkOrTimestamp }} 
+            components={{ 
+                a: renderLinkOrTimestamp, 
+                blockquote: renderBlockquote
+            }} 
             className={`${styles.feedbackContent}`}
         >
             {convertLineBreaks(props.feedback)}
