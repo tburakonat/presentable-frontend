@@ -1,5 +1,6 @@
 import { Event } from "@/types";
 import { Tooltip } from "../Tooltip";
+import { convertTimestampToSeconds } from "@/helpers/helpers";
 
 interface IEventsTimelineProps {
 	events: Event | null;
@@ -8,14 +9,8 @@ interface IEventsTimelineProps {
 }
 
 const EventsTimeline = (props: IEventsTimelineProps) => {
-	const convertTimeToSeconds = (time: string) => {
-		const [hours, minutes, seconds] = time.split(":").map(Number);
-		const [sec, millisec] = seconds.toString().split(".").map(Number);
-		return hours * 3600 + minutes * 60 + sec + (millisec || 0) / 1000;
-	};
-
 	const handleEventClick = (startInterval: string) => {
-		const time = convertTimeToSeconds(startInterval);
+		const time = convertTimestampToSeconds(startInterval);
 		props.onEventClick(time);
 	};
 
@@ -44,9 +39,9 @@ const EventsTimeline = (props: IEventsTimelineProps) => {
 					) {
 						return null;
 					}
-					const start = convertTimeToSeconds(interval.start);
+					const start = convertTimestampToSeconds(interval.start);
 					const position =
-						(start / convertTimeToSeconds(props.videoDuration)) *
+						(start / convertTimestampToSeconds(props.videoDuration)) *
 						100;
 					return (
 						<Tooltip

@@ -16,6 +16,7 @@ const EventValidationBadge = (props: EventValidationBadgeProps) => {
 
 	switch (user!.role) {
 		case "TEACHER":
+		case "ADMIN":
 			if (!props.feedbackFired) {
 				return null;
 			}
@@ -25,7 +26,9 @@ const EventValidationBadge = (props: EventValidationBadgeProps) => {
 					return (
 						<Tooltip title="Click to validate. Click to toggle validation status.">
 							<button onClick={props.onChangeValidation}>
-								<Badge color="blue">To Review</Badge>
+								<span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/10">
+									To Review
+								</span>
 							</button>
 						</Tooltip>
 					);
@@ -33,7 +36,9 @@ const EventValidationBadge = (props: EventValidationBadgeProps) => {
 					return (
 						<Tooltip title="Click to invalidate. Invalidated events will not be displayed to students.">
 							<button onClick={props.onChangeValidation}>
-								<Badge color="green">Validated</Badge>
+								<span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/10">
+									Validated
+								</span>
 							</button>
 						</Tooltip>
 					);
@@ -42,7 +47,9 @@ const EventValidationBadge = (props: EventValidationBadgeProps) => {
 					return (
 						<Tooltip title="Click to validate. Validated events will be displayed to students.">
 							<button onClick={props.onChangeValidation}>
-								<Badge color="red">Invalidated</Badge>
+								<span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+									Invalidated
+								</span>
 							</button>
 						</Tooltip>
 					);
@@ -52,7 +59,6 @@ const EventValidationBadge = (props: EventValidationBadgeProps) => {
 			}
 
 		case "STUDENT":
-		case "ADMIN":
 			if (!props.feedbackFired) {
 				return null;
 			}
@@ -61,28 +67,23 @@ const EventValidationBadge = (props: EventValidationBadgeProps) => {
 				case ExpertValidation.NOT_VALIDATED:
 					return (
 						<Tooltip title="This AI-generated feedback is not yet reviewed by an expert.">
-							<button>
-								<Badge color="blue">In Review</Badge>
-							</button>
+							<span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/10">
+								In Review
+							</span>
 						</Tooltip>
 					);
 				case ExpertValidation.VALIDATED:
 					return (
 						<Tooltip title="This AI-generated feedback was validated by an expert.">
-							<button>
-								<Badge color="green">Valid</Badge>
-							</button>
+							<span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/10">
+								Valid
+							</span>
 						</Tooltip>
 					);
 
 				case ExpertValidation.INVALIDATED:
-					return (
-						<Tooltip title="You can ignore this comment.It was invalidated by an expert.">
-							<button>
-								<Badge color="red">Invalid</Badge>
-							</button>
-						</Tooltip>
-					);
+					// Invalidated events are not displayed to students
+					return null;
 
 				default:
 					return null;

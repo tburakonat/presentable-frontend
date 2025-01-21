@@ -26,24 +26,9 @@ const TranscriptList = (props: ITranscriptListProps) => {
 	};
 
 	const formatSecondsToMinutes = (timestamp: string) => {
-		const [hours, minutes, seconds] = timestamp.split(":").map(parseFloat);
-
-		if (
-			isNaN(hours) ||
-			isNaN(minutes) ||
-			isNaN(seconds) ||
-			hours < 0 ||
-			minutes < 0 ||
-			seconds < 0
-		) {
-			throw new Error(
-				"Invalid input: Please provide a valid timestamp in the format HH:MM:SS.sss"
-			);
-		}
-
-		const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-		const displayMinutes = Math.floor(totalSeconds / 60);
-		const displaySeconds = Math.floor(totalSeconds % 60);
+		const seconds = convertTimestampToSeconds(timestamp);
+		const displayMinutes = Math.floor(seconds / 60);
+		const displaySeconds = Math.floor(seconds % 60);
 
 		return `${displayMinutes}m ${displaySeconds}s`;
 	};
