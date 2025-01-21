@@ -40,13 +40,21 @@ export enum UserRole {
 export interface Event {
     RecordingID: string;
     Intervals: {
+		id: number;
         start: string;
         end: string;
         annotations: {
             feedbackFired: boolean;
             feedbackMessage: string;
+			expertValidation: ExpertValidation;
         };
     }[]
+}
+
+export enum ExpertValidation {
+	VALIDATED = "VALIDATED",
+	INVALIDATED = "INVALIDATED",
+	NOT_VALIDATED = "NOT_VALIDATED",
 }
 
 export interface Transcript {

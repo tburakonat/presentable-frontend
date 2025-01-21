@@ -13,6 +13,8 @@ import { TranscriptList } from "./TranscriptList";
 import { EventsTimeline } from "./EventsTimeline";
 import { withAuth } from "./withAuth";
 import { withoutAuth } from "./withoutAuth";
+import { Badge } from "./Badge";
+import { EventValidationBadge } from "./EventValidationBadge";
 
 export {
 	Navbar,
@@ -30,4 +32,6 @@ export {
 	EventsTimeline,
 	withAuth,
 	withoutAuth,
+	Badge,
+	EventValidationBadge,
 };

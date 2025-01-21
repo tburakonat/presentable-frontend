@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 
 import api from "./api";
 import { useSession } from "@/context";
+import { Event } from "@/types";
 
 export const useChangeVisibilityMutation = (presentationId: number) => {
 	return useMutation({
@@ -47,5 +48,12 @@ export const useEditFeedbackMutation = () => {
 			feedbackId: number;
 			content: string;
 		}) => api.feedbacks.edit(feedbackId, content),
+	});
+};
+
+export const useEditEventsMutation = (presentationId: string) => {
+	return useMutation({
+		mutationFn: (events: Event) =>
+			api.presentations.updateEvents(presentationId, events),
 	});
 };

@@ -1,4 +1,4 @@
-import { Comment, Course, Feedback, Presentation, User } from "@/types";
+import { Comment, Course, Event, Feedback, Presentation, User } from "@/types";
 import axios from "axios";
 
 const apiClient = axios.create({
@@ -68,6 +68,13 @@ export default {
 				url: `/presentations/${presentationId}/`,
 				method: "PATCH",
 				data: { is_private },
+			});
+		},
+		updateEvents: async (presentationId: string, events: Event) => {
+			return apiClient.request<Presentation>({
+				url: `/presentations/${presentationId}/`,
+				method: "PATCH",
+				data: { presentation_events: events },
 			});
 		},
 	},
