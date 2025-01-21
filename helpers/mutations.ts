@@ -14,8 +14,13 @@ export const useChangeVisibilityMutation = (presentationId: number) => {
 export const useCreateCommentMutation = (feedbackId: number) => {
 	const { user } = useSession();
 	return useMutation({
-		mutationFn: (content: string) =>
-			api.comments.create(content, feedbackId, user!.id),
+		mutationFn: ({
+			content,
+			repliesTo,
+		}: {
+			content: string;
+			repliesTo: number | null;
+		}) => api.comments.create(content, feedbackId, user!.id, repliesTo),
 	});
 };
 

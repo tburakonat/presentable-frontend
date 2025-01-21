@@ -7,9 +7,11 @@ export interface Feedback {
 }
 
 export interface Comment {
-    id: string;
+    id: number;
     feedback: Feedback;
     content: string;
+	replies: Comment[];
+	parent_comment: number | null;
     created_at: string;
     created_by: User;
 }

@@ -130,12 +130,18 @@ export default {
 		create: async (
 			content: string,
 			feedback: number,
-			created_by: number
+			created_by: number,
+			repliesTo: number | null
 		) => {
 			const response = await apiClient.request<Comment>({
 				url: "/comments/",
 				method: "POST",
-				data: { content, feedback, created_by },
+				data: {
+					content,
+					feedback,
+					created_by,
+					parent_comment: repliesTo ?? null,
+				},
 			});
 			return response;
 		},
