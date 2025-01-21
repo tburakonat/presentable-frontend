@@ -1,7 +1,7 @@
 import { Presentation } from "@/types";
-import { Tooltip } from "../Tooltip";
 import { useSession } from "@/context";
 import { useChangeVisibilityMutation } from "@/helpers/mutations";
+import { Badge, Tooltip } from "@/components";
 
 interface IPresentationDetailsProps {
 	presentation: Presentation;
@@ -47,15 +47,12 @@ function PresentationDetails({ presentation }: IPresentationDetailsProps) {
 									: "Make private"
 							}
 						>
-							<button
-								onClick={changeVisibility}
-								className={`px-2 py-1 rounded-full text-xs font-medium ${
-									presentation.is_private
-										? "bg-red-500 text-white"
-										: "bg-green-500 text-white"
-								} hover:opacity-80`}
-							>
-								{presentation.is_private ? "Private" : "Public"}
+							<button onClick={changeVisibility}>
+								{presentation.is_private ? (
+									<Badge color="red">Private</Badge>
+								) : (
+									<Badge color="green">Public</Badge>
+								)}
 							</button>
 						</Tooltip>
 					</p>
