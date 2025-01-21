@@ -27,6 +27,13 @@ const EventsTimeline = (props: IEventsTimelineProps) => {
 		return <p>Start video to load events</p>;
 	}
 
+	if (
+		props.events.Intervals.every(
+			interval => !interval.annotations.feedbackFired
+		)
+	) {
+		return null;
+	}
 	return (
 		<div className="w-full">
 			<div className="relative border-t-2 border-gray-500">
