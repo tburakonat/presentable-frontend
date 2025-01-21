@@ -3,6 +3,8 @@ import { Transcript } from "@/types";
 import { useAtomValue } from "jotai";
 import { editorAtom } from "@/atoms";
 import { toast } from "sonner";
+import { convertTimestampToSeconds } from "@/helpers/helpers";
+import { useRouter } from "next/router";
 
 interface ITranscriptListProps {
 	transcript: Transcript | null;
@@ -11,30 +13,39 @@ interface ITranscriptListProps {
 }
 
 const TranscriptList = (props: ITranscriptListProps) => {
+	const router = useRouter();
 	const editor = useAtomValue(editorAtom);
 
 	if (!props.transcript) {
 		return <div>No transcript available</div>;
 	}
 
-	const handleSentenceClick = (wordTime: string) => {
-		const time = Number(wordTime);
-		props.onTranscriptClick(time);
+	const handleSentenceClick = (timestamp: string) => {
+		const seconds = convertTimestampToSeconds(timestamp);
+		props.onTranscriptClick(seconds);
 	};
 
-	const formatSecondsToMinutes = (secondsString: string) => {
-		const totalSeconds = parseInt(secondsString, 10);
+	const formatSecondsToMinutes = (timestamp: string) => {
+		const [hours, minutes, seconds] = timestamp.split(":").map(parseFloat);
 
-		if (isNaN(totalSeconds) || totalSeconds < 0) {
+		if (
+			isNaN(hours) ||
+			isNaN(minutes) ||
+			isNaN(seconds) ||
+			hours < 0 ||
+			minutes < 0 ||
+			seconds < 0
+		) {
 			throw new Error(
-				"Invalid input: Please provide a non-negative number as a string."
+				"Invalid input: Please provide a valid timestamp in the format HH:MM:SS.sss"
 			);
 		}
 
-		const minutes = Math.floor(totalSeconds / 60);
-		const seconds = totalSeconds % 60;
+		const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+		const displayMinutes = Math.floor(totalSeconds / 60);
+		const displaySeconds = Math.floor(totalSeconds % 60);
 
-		return `${minutes}m ${seconds}s`;
+		return `${displayMinutes}m ${displaySeconds}s`;
 	};
 
 	const handleToastClick = (text: string) => {
@@ -54,11 +65,12 @@ const TranscriptList = (props: ITranscriptListProps) => {
 	};
 
 	const handleMouseDown = () => {
+		if (!router.asPath.includes("new")) return;
 		toast.dismiss();
 	};
 
-	// TODO: Should only work on Feedback Creation Page
 	const handleMouseUp = () => {
+		if (!router.asPath.includes("new")) return;
 		const activeSelection = document.getSelection();
 		const text = activeSelection?.toString();
 
@@ -90,9 +102,12 @@ const TranscriptList = (props: ITranscriptListProps) => {
 						</p>
 						{interval.sentences.map(sentence => {
 							const isActiveSentence =
-								props.videoTime >= Number(sentence.start) &&
-								props.videoTime < Number(sentence.end) &&
-								props.videoTime < Number(interval.end);
+								props.videoTime >=
+									convertTimestampToSeconds(sentence.start) &&
+								props.videoTime <
+									convertTimestampToSeconds(sentence.end) &&
+								props.videoTime <
+									convertTimestampToSeconds(interval.end);
 
 							return (
 								<React.Fragment key={sentence.start}>
