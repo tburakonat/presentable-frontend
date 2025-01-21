@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { Box, Tab, Tabs } from "@mui/material";
+import { Tab, Tabs } from "@mui/material";
 
 import {
 	CommentSection,
@@ -14,13 +14,8 @@ import {
 import { useVideoTimestamp } from "@/hooks";
 import { useFeedbackDetailsQuery } from "@/helpers/queries";
 import { VideoTab } from "@/types";
-import { userAgent } from "next/server";
 
-interface PresentationFeedbackDetailsPageProps {}
-
-function PresentationFeedbackDetailsPage(
-	props: PresentationFeedbackDetailsPageProps
-) {
+function PresentationFeedbackDetailsPage() {
 	const router = useRouter();
 	const videoRef = useVideoTimestamp();
 	const [videoTime, setVideoTime] = useState(0);
@@ -60,13 +55,14 @@ function PresentationFeedbackDetailsPage(
 
 	return (
 		<div className="container mx-auto p-6">
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-				{/* Left Column: Video and Feedback */}
-				<div className="flex flex-col space-y-6">
+			{/* Desktop Layout */}
+			<div className="hidden xl:grid grid-cols-2 gap-4 p-4">
+				{/* Video Section */}
+				<section className="flex flex-col gap-4 p-4">
 					<video
 						ref={videoRef}
 						controls
-						className="w-full rounded-lg border border-gray-300 shadow-sm"
+						className="w-full rounded-md border border-gray-300 shadow-sm"
 						onTimeUpdate={handleTimeUpdate}
 					>
 						<source src={presentation.video_url} type="video/mp4" />
@@ -77,27 +73,10 @@ function PresentationFeedbackDetailsPage(
 						onEventClick={handleTimestampClick}
 						videoDuration={presentation.video_duration}
 					/>
+				</section>
 
-					{feedback && (
-						<div className="mt-8 p-6 rounded-lg shadow-md dark:bg-slate-800">
-							<h2 className="text-xl font-bold mb-4">Feedback</h2>
-							<FeedbackContent
-								feedback={feedback.content}
-								onTimestampClick={handleTimestampClick}
-							/>
-							<p className="text-sm text-gray-500">
-								By {feedback.created_by.first_name}{" "}
-								{feedback.created_by.last_name} on{" "}
-								{new Date(
-									feedback.created_at
-								).toLocaleDateString("de-DE")}
-							</p>
-						</div>
-					)}
-				</div>
-
-				{/* Right Column: Description, Transcription, Events, Comments */}
-				<div>
+				{/* Description Section */}
+				<section className="p-4">
 					<Tabs onChange={(_, val) => setValue(val)} value={value}>
 						<Tab
 							label="Description"
@@ -114,13 +93,9 @@ function PresentationFeedbackDetailsPage(
 							className="dark:text-white"
 							value={VideoTab.Transcription}
 						/>
-						<Tab
-							label="Comments"
-							className="dark:text-white"
-							value={VideoTab.Comments}
-						/>
 					</Tabs>
-					<Box p={2} className="overflow-y-auto max-h-[100vh]">
+
+					<div className="px-4 py-8 max-h-[30rem] overflow-y-auto">
 						{value === VideoTab.Description && (
 							<PresentationDetails presentation={presentation} />
 						)}
@@ -137,15 +112,119 @@ function PresentationFeedbackDetailsPage(
 								videoTime={videoTime}
 							/>
 						)}
-						{value === VideoTab.Comments && (
-							<CommentSection
-								feedback={feedback}
-								comments={comments}
-								onTimestampClick={handleTimestampClick}
+					</div>
+				</section>
+
+				{/* Feedback Section */}
+				<section className="col-span-2 border p-4 mt-4">
+					<h2 className="text-xl font-bold mb-4">Feedback</h2>
+					<FeedbackContent
+						feedback={feedback.content}
+						onTimestampClick={handleTimestampClick}
+					/>
+					<p className="text-sm text-gray-500">
+						By {feedback.created_by.first_name}{" "}
+						{feedback.created_by.last_name} on{" "}
+						{new Date(feedback.created_at).toLocaleDateString(
+							"de-DE"
+						)}
+					</p>
+				</section>
+
+				{/* Comments Section */}
+				<section className="col-span-2 border p-4 mt-4">
+					<CommentSection
+						feedback={feedback}
+						comments={comments}
+						onTimestampClick={handleTimestampClick}
+					/>
+				</section>
+			</div>
+
+			{/* Mobile Layout */}
+			<div className="grid grid-cols-1 xl:hidden">
+				{/* Video Section */}
+				<section className="border flex flex-col p-4 gap-4">
+					<video
+						ref={videoRef}
+						controls
+						className="w-full rounded-lg border border-gray-300 shadow-sm"
+						onTimeUpdate={handleTimeUpdate}
+					>
+						<source src={presentation.video_url} type="video/mp4" />
+						Your browser does not support the video tag.
+					</video>
+					<EventsTimeline
+						events={presentation.presentation_events}
+						onEventClick={handleTimestampClick}
+						videoDuration={presentation.video_duration}
+					/>
+				</section>
+
+				{/* Description Section */}
+				<section className="border p-4 mt-4">
+					<Tabs onChange={(_, val) => setValue(val)} value={value}>
+						<Tab
+							label="Description"
+							className="dark:text-white"
+							value={VideoTab.Description}
+						/>
+						<Tab
+							label="Events"
+							className="dark:text-white"
+							value={VideoTab.Events}
+						/>
+						<Tab
+							label="Transcription"
+							className="dark:text-white"
+							value={VideoTab.Transcription}
+						/>
+					</Tabs>
+
+					<div className="px-4 py-8 max-h-[30rem] overflow-y-auto">
+						{value === VideoTab.Description && (
+							<PresentationDetails presentation={presentation} />
+						)}
+						{value === VideoTab.Events && (
+							<EventList
+								event={presentation.presentation_events}
+								onEventClick={handleTimestampClick}
 							/>
 						)}
-					</Box>
-				</div>
+						{value === VideoTab.Transcription && (
+							<TranscriptList
+								transcript={presentation.transcription}
+								onTranscriptClick={handleTimestampClick}
+								videoTime={videoTime}
+							/>
+						)}
+					</div>
+				</section>
+
+				{/* Feedback Section */}
+				<section className="border p-4 mt-4">
+					<h2 className="text-xl font-bold mb-4">Feedback</h2>
+					<FeedbackContent
+						feedback={feedback.content}
+						onTimestampClick={handleTimestampClick}
+					/>
+					<p className="text-sm text-gray-500">
+						By {feedback.created_by.first_name}{" "}
+						{feedback.created_by.last_name} on{" "}
+						{new Date(feedback.created_at).toLocaleDateString(
+							"de-DE"
+						)}
+					</p>
+				</section>
+
+				{/* Comments Section */}
+				<section className="border p-4 mt-4">
+					<CommentSection
+						feedback={feedback}
+						comments={comments}
+						onTimestampClick={handleTimestampClick}
+					/>
+				</section>
 			</div>
 		</div>
 	);
