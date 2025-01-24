@@ -13,6 +13,7 @@ import {
 import { useVideoTimestamp } from "@/hooks";
 import { VideoTab } from "@/types";
 import { usePresentationQuery } from "@/helpers/queries";
+import Head from "next/head";
 
 interface CreateFeedbackPageProps {}
 
@@ -52,67 +53,80 @@ function CreateFeedbackPage(props: CreateFeedbackPageProps) {
 	};
 
 	return (
-		<div className="container mx-auto p-6">
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-				{/* Left Column: Video and Feedback */}
-				<div className="flex flex-col space-y-6">
-					<video
-						ref={videoRef}
-						controls
-						className="w-full rounded-lg border border-gray-300 shadow-sm"
-						onTimeUpdate={handleTimeUpdate}
-					>
-						<source src={presentation.video_url} type="video/mp4" />
-						Your browser does not support the video tag.
-					</video>
-					<EventsTimeline
-						events={presentation.presentation_events}
-						onEventClick={handleTimestampClick}
-						videoDuration={presentation.video_duration}
-					/>
-					<Editor presentationId={presentation.id} />
-				</div>
+		<>
+			<Head>
+				<title>{presentation.title} - New Feedback</title>
+			</Head>
+			<div className="container mx-auto p-6">
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+					{/* Left Column: Video and Feedback */}
+					<div className="flex flex-col space-y-6">
+						<video
+							ref={videoRef}
+							controls
+							className="w-full rounded-lg border border-gray-300 shadow-sm"
+							onTimeUpdate={handleTimeUpdate}
+						>
+							<source
+								src={presentation.video_url}
+								type="video/mp4"
+							/>
+							Your browser does not support the video tag.
+						</video>
+						<EventsTimeline
+							events={presentation.presentation_events}
+							onEventClick={handleTimestampClick}
+							videoDuration={presentation.video_duration}
+						/>
+						<Editor presentationId={presentation.id} />
+					</div>
 
-				{/* Right Column: Tabs for Description, Transcription, Events */}
-				<div>
-					<Tabs onChange={(_, val) => setValue(val)} value={value}>
-						<Tab
-							label="Description"
-							className="dark:text-white"
-							value={VideoTab.Description}
-						/>
-						<Tab
-							label="Events"
-							className="dark:text-white"
-							value={VideoTab.Events}
-						/>
-						<Tab
-							label="Transcription"
-							className="dark:text-white"
-							value={VideoTab.Transcription}
-						/>
-					</Tabs>
-					<Box p={2} className="overflow-y-auto max-h-[100vh]">
-						{value === VideoTab.Description && (
-							<PresentationDetails presentation={presentation} />
-						)}
-						{value === VideoTab.Events && (
-							<EventList
-								event={presentation.presentation_events}
-								onEventClick={handleTimestampClick}
+					{/* Right Column: Tabs for Description, Transcription, Events */}
+					<div>
+						<Tabs
+							onChange={(_, val) => setValue(val)}
+							value={value}
+						>
+							<Tab
+								label="Description"
+								className="dark:text-white"
+								value={VideoTab.Description}
 							/>
-						)}
-						{value === VideoTab.Transcription && (
-							<TranscriptList
-								transcript={presentation.transcription}
-								onTranscriptClick={handleTimestampClick}
-								videoTime={videoTime}
+							<Tab
+								label="Events"
+								className="dark:text-white"
+								value={VideoTab.Events}
 							/>
-						)}
-					</Box>
+							<Tab
+								label="Transcription"
+								className="dark:text-white"
+								value={VideoTab.Transcription}
+							/>
+						</Tabs>
+						<Box p={2} className="overflow-y-auto max-h-[100vh]">
+							{value === VideoTab.Description && (
+								<PresentationDetails
+									presentation={presentation}
+								/>
+							)}
+							{value === VideoTab.Events && (
+								<EventList
+									event={presentation.presentation_events}
+									onEventClick={handleTimestampClick}
+								/>
+							)}
+							{value === VideoTab.Transcription && (
+								<TranscriptList
+									transcript={presentation.transcription}
+									onTranscriptClick={handleTimestampClick}
+									videoTime={videoTime}
+								/>
+							)}
+						</Box>
+					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 }
 

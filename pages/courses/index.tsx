@@ -38,7 +38,7 @@ function CoursesPage() {
 	return (
 		<>
 			<Head>
-				<title>Alle Kurse</title>
+				<title>Courses</title>
 			</Head>
 			<div className="container mx-auto p-4">
 				<div className="mb-8">
