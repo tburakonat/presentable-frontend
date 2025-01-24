@@ -13,7 +13,10 @@ import {
 	TranscriptList,
 	EventsTimeline,
 	withAuth,
+	ErrorMessage,
+	Loading,
 } from "@/components";
+import { AxiosError } from "axios";
 
 interface PresentationDetailsPageProps {}
 
@@ -27,15 +30,18 @@ function PresentationDetailsPage(props: PresentationDetailsPageProps) {
 	);
 
 	if (presentationQuery.isLoading || feedbacksQuery.isLoading) {
-		return <p>Loading...</p>;
+		return <Loading />;
 	}
 
 	if (presentationQuery.error || feedbacksQuery.error) {
+		const { response } = presentationQuery.error as AxiosError;
+		const { detail, status, statusText } = response?.data as any;
 		return (
-			<p>
-				{presentationQuery.error?.message ||
-					feedbacksQuery.error?.message}
-			</p>
+			<ErrorMessage
+				detail={detail}
+				status={status}
+				statusText={statusText}
+			/>
 		);
 	}
 

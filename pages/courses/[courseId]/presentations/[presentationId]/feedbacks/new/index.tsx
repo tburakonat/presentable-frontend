@@ -9,11 +9,14 @@ import {
 	TranscriptList,
 	PresentationDetails,
 	withAuth,
+	ErrorMessage,
+	Loading,
 } from "@/components";
 import { useVideoTimestamp } from "@/hooks";
 import { VideoTab } from "@/types";
 import { usePresentationQuery } from "@/helpers/queries";
 import Head from "next/head";
+import { AxiosError } from "axios";
 
 interface CreateFeedbackPageProps {}
 
@@ -27,11 +30,19 @@ function CreateFeedbackPage(props: CreateFeedbackPageProps) {
 	);
 
 	if (presentationQuery.isLoading) {
-		return <p>Loading...</p>;
+		return <Loading />;
 	}
 
 	if (presentationQuery.error) {
-		return <p>{presentationQuery.error?.message}</p>;
+		const { response } = presentationQuery.error as AxiosError;
+		const { detail, status, statusText } = response?.data as any;
+		return (
+			<ErrorMessage
+				detail={detail}
+				status={status}
+				statusText={statusText}
+			/>
+		);
 	}
 
 	const presentation = presentationQuery.data?.data;

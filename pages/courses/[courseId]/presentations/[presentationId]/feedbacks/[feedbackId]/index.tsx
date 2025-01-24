@@ -10,11 +10,14 @@ import {
 	TranscriptList,
 	PresentationDetails,
 	withAuth,
+	Loading,
+	ErrorMessage,
 } from "@/components";
 import { useVideoTimestamp } from "@/hooks";
 import { useFeedbackDetailsQuery } from "@/helpers/queries";
 import { VideoTab } from "@/types";
 import Head from "next/head";
+import { AxiosError } from "axios";
 
 function PresentationFeedbackDetailsPage() {
 	const router = useRouter();
@@ -26,11 +29,19 @@ function PresentationFeedbackDetailsPage() {
 	);
 
 	if (feedbackQuery.isLoading || commentsQuery.isLoading) {
-		return <p>Loading...</p>;
+		return <Loading />;
 	}
 
 	if (feedbackQuery.error || commentsQuery.error) {
-		return <p>{feedbackQuery.error?.message}</p>;
+		const { response } = feedbackQuery.error as AxiosError;
+		const { detail, status, statusText } = response?.data as any;
+		return (
+			<ErrorMessage
+				detail={detail}
+				status={status}
+				statusText={statusText}
+			/>
+		);
 	}
 
 	const feedback = feedbackQuery.data?.data;

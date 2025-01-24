@@ -16,6 +16,8 @@ import { withoutAuth } from "./withoutAuth";
 import { Badge } from "./Badge";
 import { EventValidationBadge } from "./EventValidationBadge";
 import { CommentModal } from "./CommentModal";
+import { ErrorMessage } from "./ErrorMessage";
+import { Loading } from "./Loading";
 
 export {
 	Navbar,
@@ -36,4 +38,6 @@ export {
 	Badge,
 	EventValidationBadge,
 	CommentModal,
+	ErrorMessage,
+	Loading,
 };
