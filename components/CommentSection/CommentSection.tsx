@@ -110,9 +110,13 @@ export default function CommentSection({
 	};
 
 	const renderComments = (comments: Comment[]) => {
-		const filteredComments = comments.filter(
-			c => !c.is_deleted || c.replies.length > 0
-		);
+		const filteredComments = comments.filter(comment => {
+			// Include comments that are not deleted or have non-deleted replies
+			if (!comment.is_deleted) return true;
+
+			// Check if there are any non-deleted replies
+			return comment.replies.some(reply => !reply.is_deleted);
+		});
 		return filteredComments.map(comment => (
 			<React.Fragment key={comment.id}>
 				<div className="my-2 border shadow-md rounded-lg p-3">
