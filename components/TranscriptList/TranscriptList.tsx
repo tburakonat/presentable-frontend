@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Transcript } from "@/types";
 import { useAtomValue } from "jotai";
 import { editorAtom } from "@/atoms";
@@ -15,6 +15,16 @@ interface ITranscriptListProps {
 const TranscriptList = (props: ITranscriptListProps) => {
 	const router = useRouter();
 	const editor = useAtomValue(editorAtom);
+	const activeSentenceRef = useRef<HTMLSpanElement | null>(null);
+
+	useEffect(() => {
+		if (activeSentenceRef.current) {
+			activeSentenceRef.current.scrollIntoView({
+				behavior: "smooth",
+				block: "center",
+			});
+		}
+	}, [props.videoTime]);
 
 	if (!props.transcript) {
 		return <div>No transcript available</div>;
@@ -97,6 +107,11 @@ const TranscriptList = (props: ITranscriptListProps) => {
 							return (
 								<React.Fragment key={sentence.start}>
 									<span
+										ref={
+											isActiveSentence
+												? activeSentenceRef
+												: null
+										}
 										className={`hover:transition-all hover:bg-yellow-300 hover:text-black cursor-pointer ${
 											isActiveSentence
 												? "bg-yellow-500 text-black"
