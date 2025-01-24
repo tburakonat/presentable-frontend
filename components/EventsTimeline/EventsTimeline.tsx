@@ -1,4 +1,4 @@
-import { Event } from "@/types";
+import { Event, ExpertValidation } from "@/types";
 import { Tooltip } from "../Tooltip";
 import { convertTimestampToSeconds } from "@/helpers/helpers";
 
@@ -9,12 +9,16 @@ interface IEventsTimelineProps {
 }
 
 const EventsTimeline = (props: IEventsTimelineProps) => {
+	// The EventsTimeline only shows AI-generated events that have been validated by an expert.
+	const aiGeneratedEvents = props.events?.Intervals.filter(
+		interval => interval.annotations.feedbackFired
+	);
 	const handleEventClick = (startInterval: string) => {
 		const time = convertTimestampToSeconds(startInterval);
 		props.onEventClick(time);
 	};
 
-	if (!props.events) {
+	if (!aiGeneratedEvents || aiGeneratedEvents.length === 0) {
 		return null;
 	}
 
@@ -23,8 +27,10 @@ const EventsTimeline = (props: IEventsTimelineProps) => {
 	}
 
 	if (
-		props.events.Intervals.every(
-			interval => !interval.annotations.feedbackFired
+		aiGeneratedEvents.every(
+			interval =>
+				interval.annotations.expertValidation ===
+				ExpertValidation.INVALIDATED
 		)
 	) {
 		return null;
@@ -32,29 +38,28 @@ const EventsTimeline = (props: IEventsTimelineProps) => {
 	return (
 		<div className="w-full">
 			<div className="relative border-t-2 border-gray-500">
-				{props.events.Intervals.map(interval => {
+				{aiGeneratedEvents.map(event => {
 					if (
 						!props.videoDuration ||
-						!interval.annotations.feedbackFired
+						!event.annotations.feedbackFired
 					) {
 						return null;
 					}
-					const start = convertTimestampToSeconds(interval.start);
+					const start = convertTimestampToSeconds(event.start);
 					const position =
-						(start / convertTimestampToSeconds(props.videoDuration)) *
+						(start /
+							convertTimestampToSeconds(props.videoDuration)) *
 						100;
 					return (
 						<Tooltip
-							key={interval.start}
-							tooltipComponent={
-								interval.annotations.feedbackMessage
-							}
+							key={event.start}
+							tooltipComponent={event.annotations.feedbackMessage}
 							style={{
 								left: `${position}%`,
 							}}
 						>
 							<div
-								onClick={() => handleEventClick(interval.start)}
+								onClick={() => handleEventClick(event.start)}
 								className="absolute w-3 h-3 bg-white rounded-full border-2 border-black cursor-pointer translate-x--1/2 -translate-y-1/2"
 							/>
 						</Tooltip>
