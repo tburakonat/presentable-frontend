@@ -15,6 +15,7 @@ import { withAuth } from "./withAuth";
 import { withoutAuth } from "./withoutAuth";
 import { Badge } from "./Badge";
 import { EventValidationBadge } from "./EventValidationBadge";
+import { CommentModal } from "./CommentModal";
 
 export {
 	Navbar,
@@ -34,4 +35,5 @@ export {
 	withoutAuth,
 	Badge,
 	EventValidationBadge,
+	CommentModal,
 };
