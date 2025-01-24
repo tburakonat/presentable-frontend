@@ -1,4 +1,4 @@
-import { Comment, Feedback } from "@/types";
+import { Comment, Feedback, User } from "@/types";
 import { FeedbackContent } from "../FeedbackContent";
 import { useState } from "react";
 import {
@@ -6,6 +6,9 @@ import {
 	useDeleteCommentMutation,
 } from "@/helpers/mutations";
 import { useSession } from "@/context";
+import React from "react";
+import { AnimatePresence, motion } from "motion/react";
+import moment from "moment";
 
 interface ICommentSectionProps {
 	feedback: Feedback;
@@ -13,13 +16,20 @@ interface ICommentSectionProps {
 	onTimestampClick: (time: number) => void;
 }
 
-export default function CommentSection(props: ICommentSectionProps) {
+export default function CommentSection({
+	comments,
+	feedback,
+	onTimestampClick,
+}: ICommentSectionProps) {
 	const { user } = useSession();
 	const [commentInput, setCommentInput] = useState<string>("");
 	const [replyInputs, setReplyInputs] = useState<{
 		[key: number]: string | undefined;
 	}>({});
-	const { mutate } = useCreateCommentMutation(props.feedback.id);
+	const [visibleReplies, setVisibleReplies] = useState<{
+		[key: number]: boolean;
+	}>({});
+	const { mutate } = useCreateCommentMutation(feedback.id);
 	const { mutate: deleteComment } = useDeleteCommentMutation();
 
 	const handleAddComment = async () => {
@@ -45,6 +55,7 @@ export default function CommentSection(props: ICommentSectionProps) {
 			if (!replyContent) return;
 			mutate({ content: replyContent, repliesTo: commentId });
 			setReplyInputs(prev => ({ ...prev, [commentId]: undefined }));
+			setVisibleReplies(prev => ({ ...prev, [commentId]: true }));
 		} catch (error) {
 			console.error(error);
 		}
@@ -57,94 +68,174 @@ export default function CommentSection(props: ICommentSectionProps) {
 		}));
 	};
 
-	const renderComments = (
-		comments: Comment[],
-		parentId: number | null = null,
-		level: number = 0
-	) => {
-		// Filter comments that are replies to the given parentId
-		const filteredComments = comments.filter(
-			comment => comment.parent_comment === parentId
-		);
+	const createTooltip = (dateString: string) => {
+		const date = new Date(dateString).toLocaleDateString("de-DE", {
+			year: "numeric",
+			weekday: "long",
+			day: "numeric",
+			month: "long",
+		});
+		const time = new Date(dateString).toLocaleTimeString("de-DE", {
+			hour: "2-digit",
+			minute: "2-digit",
+			timeZoneName: "short",
+		});
 
-		// Render each comment and its replies recursively
+		return `${date} at ${time}`;
+	};
+
+	const renderUsername = (createdBy: User) => {
+		const username =
+			!createdBy.first_name || !createdBy.last_name
+				? createdBy.username
+				: `${createdBy.first_name} ${createdBy.last_name}`;
+		const isFeedbackOwner = createdBy.id === feedback.created_by.id;
+		const isPresentationOwner =
+			createdBy.id === feedback.presentation.created_by.id;
+		const isYourself = createdBy.id === user!.id;
+		return `${isYourself ? "You" : username} ${
+			isPresentationOwner
+				? "(Presentation Owner)"
+				: isFeedbackOwner
+				? "(Feedback Owner)"
+				: ""
+		} `;
+	};
+
+	const toggleReplies = (commentId: number) => {
+		setVisibleReplies(prev => ({
+			...prev,
+			[commentId]: !prev[commentId],
+		}));
+	};
+
+	const renderComments = (comments: Comment[]) => {
+		const filteredComments = comments.filter(
+			c => !c.is_deleted || c.replies.length > 0
+		);
 		return filteredComments.map(comment => (
-			<div
-				key={comment.id}
-				className={`p-3 my-2 rounded-lg shadow-md border-l-4 ${
-					level === 0 ? "border-blue-500" : "border-gray-500"
-				} dark:bg-slate-900`}
-				style={{ marginLeft: `${level * 20}px` }}
-			>
-				<div className="flex justify-between">
-					<FeedbackContent
-						feedback={comment.content}
-						onTimestampClick={props.onTimestampClick}
-					/>
-					<div className="flex space-x-2">
-						{user!.id === comment.created_by.id && (
+			<React.Fragment key={comment.id}>
+				<div className="my-2 border shadow-md rounded-lg p-3">
+					<div className="flex flex-col gap-2">
+						<p className="text-xs text-gray-500">
+							{renderUsername(comment.created_by)}
+							{" • "}
 							<span
 								className="cursor-pointer"
-								onClick={() => handleDeleteComment(comment.id)}
+								title={createTooltip(comment.created_at)}
 							>
-								<i className="ri-delete-bin-line"></i>
+								{moment(comment.created_at).fromNow()}
 							</span>
+						</p>
+
+						{comment.is_deleted ? (
+							<p>
+								<i>This comment has been deleted.</i>
+							</p>
+						) : (
+							<p>{comment.content}</p>
 						)}
-						<span
-							className="cursor-pointer"
-							onClick={() => toggleReplyInput(comment.id)}
-						>
-							<i className="ri-reply-line"></i>
-						</span>
-					</div>
-				</div>
-				<p className="text-sm text-gray-500">
-					By {comment.created_by.first_name}{" "}
-					{comment.created_by.last_name} on{" "}
-					{new Date(comment.created_at).toLocaleDateString("de-DE")}{" "}
-					{new Date(comment.created_at).toLocaleTimeString("de-DE", {
-						hour: "2-digit",
-						minute: "2-digit",
-					})}
-				</p>
-				{/* Reply Input */}
-				{replyInputs[comment.id] !== undefined && (
-					<div className="mt-2">
-						<textarea
-							value={replyInputs[comment.id]}
-							onChange={e =>
-								setReplyInputs(prev => ({
-									...prev,
-									[comment.id]: e.target.value,
-								}))
-							}
-							placeholder="Write a reply..."
-							className="w-full p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 text-black"
-							rows={2}
-						></textarea>
-						<div className="flex justify-end space-x-2">
-							<button
-								className="mt-2 px-4 py-2 bg-green-500 rounded-lg shadow-md hover:bg-green-600 text-white"
-								onClick={() => handleAddReply(comment.id)}
-							>
-								Add Reply
-							</button>
-							<button
-								className="mt-2 px-4 py-2 bg-red-500 rounded-lg shadow-md hover:bg-red-600 text-white"
-								onClick={() => toggleReplyInput(comment.id)}
-							>
-								Cancel
-							</button>
+
+						<div className="flex">
+							{comment.replies.length > 0 &&
+								comment.replies.some(r => !r.is_deleted) && (
+									<div
+										className="cursor-pointer"
+										onClick={() =>
+											toggleReplies(comment.id)
+										}
+									>
+										<i
+											className={
+												visibleReplies[comment.id]
+													? "ri-arrow-down-s-line"
+													: "ri-arrow-right-s-line"
+											}
+										></i>
+									</div>
+								)}
+							<div className="flex gap-4 ml-auto">
+								{comment.created_by.id === user!.id && (
+									<div
+										className="cursor-pointer"
+										title="Delete Comment"
+										onClick={() =>
+											handleDeleteComment(comment.id)
+										}
+									>
+										<i className="ri-delete-bin-line"></i>
+									</div>
+								)}
+								<div
+									className="cursor-pointer"
+									title="Reply"
+									onClick={() => toggleReplyInput(comment.id)}
+								>
+									<i className="ri-reply-line"></i>
+								</div>
+							</div>
 						</div>
 					</div>
-				)}
-				{/* Recursively render replies */}
-				{comment.replies && comment.replies.length > 0 && (
-					<div className="ml-4">
-						{renderComments(comment.replies, comment.id, level + 1)}
-					</div>
-				)}
-			</div>
+
+					<AnimatePresence>
+						{replyInputs[comment.id] !== undefined && (
+							<motion.div
+								className="mt-2"
+								initial={{ opacity: 0, height: 0 }}
+								animate={{ opacity: 1, height: "auto" }}
+								exit={{ opacity: 0, height: 0 }}
+								transition={{ duration: 0.3 }}
+							>
+								<textarea
+									value={replyInputs[comment.id]}
+									onChange={e =>
+										setReplyInputs(prev => ({
+											...prev,
+											[comment.id]: e.target.value,
+										}))
+									}
+									placeholder="Write a reply..."
+									className="w-full p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 text-black"
+									rows={2}
+								></textarea>
+								<div className="flex justify-end space-x-2">
+									<button
+										className="mt-2 px-4 py-2 bg-green-500 rounded-lg shadow-md hover:bg-green-600 text-white"
+										onClick={() =>
+											handleAddReply(comment.id)
+										}
+									>
+										Add Reply
+									</button>
+									<button
+										className="mt-2 px-4 py-2 bg-red-500 rounded-lg shadow-md hover:bg-red-600 text-white"
+										onClick={() =>
+											toggleReplyInput(comment.id)
+										}
+									>
+										Cancel
+									</button>
+								</div>
+							</motion.div>
+						)}
+					</AnimatePresence>
+				</div>
+
+				<AnimatePresence>
+					{visibleReplies[comment.id] &&
+						comment.replies.length > 0 && (
+							<motion.div
+								className="pl-4 border-l"
+								initial={{ opacity: 0, height: 0 }}
+								animate={{ opacity: 1, height: "auto" }}
+								exit={{ opacity: 0, height: 0 }}
+								transition={{ duration: 0.3 }}
+							>
+								{renderComments(comment.replies)}
+							</motion.div>
+						)}
+				</AnimatePresence>
+			</React.Fragment>
 		));
 	};
 
@@ -166,10 +257,17 @@ export default function CommentSection(props: ICommentSectionProps) {
 					Add Comment
 				</button>
 			</div>
-			{props.comments !== null && props.comments.length > 0 ? (
-				renderComments(props.comments)
+			{comments !== null && comments.length > 0 ? (
+				<div className="mt-4">
+					{renderComments(comments.filter(c => !c.parent_comment))}
+				</div>
 			) : (
-				<p>No comments yet. Be the first to comment!</p>
+				<div className="mt-4">
+					<p>
+						No comments yet. Be the first to comment on this
+						feedback!
+					</p>
+				</div>
 			)}
 		</>
 	);

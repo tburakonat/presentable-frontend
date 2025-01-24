@@ -8,10 +8,11 @@ export interface Feedback {
 
 export interface Comment {
     id: number;
-    feedback: Feedback;
+    feedback: number;
     content: string;
 	replies: Comment[];
-	parent_comment: number | null;
+    parent_comment: number | null;
+    is_deleted: boolean;
     created_at: string;
     created_by: User;
 }
