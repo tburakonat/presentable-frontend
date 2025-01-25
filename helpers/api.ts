@@ -54,6 +54,12 @@ export default {
 				method: "GET",
 			});
 		},
+		getAll: async () => {
+			return apiClient.request<Presentation[]>({
+				url: "/presentations/",
+				method: "GET",
+			});
+		},
 		getByCourse: async (courseId: string) => {
 			return apiClient.request<Presentation[]>({
 				url: `/presentations/?course=${courseId}`,

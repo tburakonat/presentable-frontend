@@ -74,3 +74,12 @@ export const useFeedbackDetailsQuery = (feedbackId: string) => {
 		],
 	});
 };
+
+export const usePresentationsQuery = () => {
+	const { user } = useSession();
+	return useQuery({
+		queryKey: ["presentations"],
+		queryFn: () => api.presentations.getAll(),
+		enabled: !!user,
+	});
+};
