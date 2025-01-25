@@ -27,7 +27,7 @@ export default function Editor(props: IEditorProps) {
 				id: 1,
 				name: "Default Template",
 				content:
-					"<h1>Feedback Template</h1><div><h2>Positive Feedback 🎉</h2></div><div><h2>Corrective Feedback 🛠️</h2></div><div><h2>Recommendations 💡</h2></div><div><h2>Additional Notes 📝</h2></div><div><h2>Presentation Style 🗣</h2></div>",
+					"<h1>Feedback Template</h1><div><h2>Positive Feedback</h2></div><div><h2>Corrective Feedback</h2></div><div><h2>Recommendations</h2></div><div><h2>Additional Notes</h2></div><div><h2>Presentation Style</h2></div>",
 			},
 		]
 	);
@@ -45,29 +45,31 @@ export default function Editor(props: IEditorProps) {
 	});
 
 	const convertTimestampsToLinks = (htmlContent: string) => {
-		// Erzeuge ein DOM-Parser-Objekt
+		// DOM-Parser verwenden, um den HTML-String zu analysieren
 		const parser = new DOMParser();
 		const doc = parser.parseFromString(htmlContent, "text/html");
 
-		// Erzeuge einen TreeWalker, um alle Textknoten zu durchlaufen
+		// TreeWalker für alle Textknoten erstellen
 		const walker = document.createTreeWalker(
 			doc.body,
 			NodeFilter.SHOW_TEXT,
 			null
 		);
 
-		// Regex für Timestamps (z. B. 02:13)
 		const timestampRegex = /\b(\d{1,2}):(\d{2})\b/g;
-
 		let node;
-		// Alle Textknoten durchgehen
-		while ((node = walker.nextNode())) {
-			const textContent = node.nodeValue;
-			if (!textContent) {
-				continue;
-			}
 
-			// Falls der Text Timestamps enthält, ersetze sie durch Links
+		// Alle Textknoten sammeln, die Timestamps enthalten
+		const nodesToUpdate = [];
+		while ((node = walker.nextNode())) {
+			if (timestampRegex.test(node.nodeValue || "")) {
+				nodesToUpdate.push(node);
+			}
+		}
+
+		// Alle gefundenen Knoten durchlaufen und Timestamps ersetzen
+		nodesToUpdate.forEach(node => {
+			const textContent = node.nodeValue || "";
 			const updatedContent = textContent.replace(
 				timestampRegex,
 				(match, minutes, seconds) => {
@@ -77,22 +79,18 @@ export default function Editor(props: IEditorProps) {
 					const updatedPath = `${
 						currentPath.split("?")[0]
 					}?t=${totalSeconds}`;
-
 					return `<a href="${updatedPath}">${match}</a>`;
 				}
 			);
 
-			// Falls der Text aktualisiert wurde, ersetze den alten Knoten durch den neuen
-			if (updatedContent !== textContent) {
-				if (!node.parentNode) {
-					continue;
-				}
+			// Aktualisierte Inhalte als HTML einsetzen
+			const span = document.createElement("span");
+			span.innerHTML = updatedContent;
 
-				const span = document.createElement("span");
-				span.innerHTML = updatedContent;
+			if (node.parentNode) {
 				node.parentNode.replaceChild(span, node);
 			}
-		}
+		});
 
 		// Den aktualisierten HTML-Inhalt zurückgeben
 		return doc.body.innerHTML;
@@ -112,7 +110,6 @@ export default function Editor(props: IEditorProps) {
 		});
 	};
 
-	// TODO: Probleme mit dem Speichern von Feedback mit Emojis beheben
 	const handleSubmit = async (e: React.FormEvent) => {
 		if (!editor) return;
 
