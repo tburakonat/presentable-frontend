@@ -190,35 +190,39 @@ export default function CommentSection({
 								exit={{ opacity: 0, height: 0 }}
 								transition={{ duration: 0.3 }}
 							>
-								<textarea
-									value={replyInputs[comment.id]}
-									onChange={e =>
-										setReplyInputs(prev => ({
-											...prev,
-											[comment.id]: e.target.value,
-										}))
-									}
-									placeholder="Write a reply..."
-									className="w-full p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 text-black"
-									rows={2}
-								></textarea>
-								<div className="flex justify-end space-x-2">
-									<button
-										className="mt-2 px-4 py-2 bg-green-500 rounded-lg shadow-md hover:bg-green-600 text-white"
-										onClick={() =>
-											handleAddReply(comment.id)
+								<div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+									<textarea
+										value={replyInputs[comment.id]}
+										onChange={e =>
+											setReplyInputs(prev => ({
+												...prev,
+												[comment.id]: e.target.value,
+											}))
 										}
-									>
-										Add Reply
-									</button>
-									<button
-										className="mt-2 px-4 py-2 bg-red-500 rounded-lg shadow-md hover:bg-red-600 text-white"
-										onClick={() =>
-											toggleReplyInput(comment.id)
-										}
-									>
-										Cancel
-									</button>
+										placeholder="Write a reply..."
+										rows={2}
+										className="w-full p-2 text-sm rounded-lg text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
+									/>
+									<div className="flex items-center justify-end space-x-2 px-3 py-2 border-t dark:border-gray-600 border-gray-200">
+										<button
+											type="submit"
+											onClick={() =>
+												handleAddReply(comment.id)
+											}
+											className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-green-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-green-900 hover:bg-green-800"
+										>
+											Reply
+										</button>
+										<button
+											type="submit"
+											onClick={() =>
+												toggleReplyInput(comment.id)
+											}
+											className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-red-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-red-900 hover:bg-red-800"
+										>
+											Cancel
+										</button>
+									</div>
 								</div>
 							</motion.div>
 						)}
@@ -246,20 +250,23 @@ export default function CommentSection({
 	return (
 		<>
 			<h2 className="text-xl font-bold mb-2">Comments</h2>
-			<div>
+			<div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
 				<textarea
 					value={commentInput}
 					onChange={e => setCommentInput(e.target.value)}
+					rows={4}
+					className="w-full p-2 text-sm rounded-lg text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
 					placeholder="Write a comment..."
-					className="w-full p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 text-black"
-					rows={3}
-				></textarea>
-				<button
-					className="mt-2 px-4 py-2 bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 text-white"
-					onClick={handleAddComment}
-				>
-					Add Comment
-				</button>
+				/>
+				<div className="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600 border-gray-200">
+					<button
+						type="submit"
+						onClick={handleAddComment}
+						className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800"
+					>
+						Post comment
+					</button>
+				</div>
 			</div>
 			{comments !== null && comments.length > 0 ? (
 				<div className="mt-4">
