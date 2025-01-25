@@ -58,7 +58,7 @@ function PresentationPage() {
 						<Link
 							key={presentation.id}
 							href={`/courses/${presentation.course.id}/presentations/${presentation.id}`}
-							className="block bg-white border border-gray-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow"
+							className="block bg-white dark:bg-slate-800 border border-gray-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow"
 						>
 							<div className="mb-4">
 								<h2 className="font-bold text-xl">

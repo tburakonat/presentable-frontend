@@ -113,29 +113,55 @@ function PresentationFeedbackDetailsPage() {
 					</section>
 
 					{/* Description Section */}
-					<section className="p-4">
-						<Tabs
-							onChange={(_, val) => setValue(val)}
-							value={value}
-						>
-							<Tab
-								label="Description"
-								className="dark:text-white"
-								value={VideoTab.Description}
-							/>
-							<Tab
-								label="Events"
-								className="dark:text-white"
-								value={VideoTab.Events}
-							/>
-							<Tab
-								label="Transcription"
-								className="dark:text-white"
-								value={VideoTab.Transcription}
-							/>
-						</Tabs>
-
-						<div className="px-4 py-8 max-h-80 overflow-y-auto">
+					<section>
+						<div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
+							<ul className="flex flex-wrap -mb-px">
+								<li className="me-2">
+									<button
+										className={`inline-block p-4 rounded-t-lg ${
+											value === VideoTab.Description
+												? "border-b-2 text-blue-600 border-blue-600 active dark:text-blue-500 dark:border-blue-50"
+												: "hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+										}`}
+										aria-current="page"
+										onClick={() =>
+											setValue(VideoTab.Description)
+										}
+									>
+										Description
+									</button>
+								</li>
+								<li className="me-2">
+									<button
+										className={`inline-block p-4 rounded-t-lg  ${
+											value === VideoTab.Events
+												? "border-b-2 text-blue-600 border-blue-600 active dark:text-blue-500 dark:border-blue-50"
+												: "hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+										}`}
+										onClick={() =>
+											setValue(VideoTab.Events)
+										}
+									>
+										Events
+									</button>
+								</li>
+								<li className="me-2">
+									<button
+										className={`inline-block p-4 rounded-t-lg  ${
+											value === VideoTab.Transcription
+												? "border-b-2 text-blue-600 border-blue-600 active dark:text-blue-500 dark:border-blue-50"
+												: "hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+										}`}
+										onClick={() =>
+											setValue(VideoTab.Transcription)
+										}
+									>
+										Transcription
+									</button>
+								</li>
+							</ul>
+						</div>
+						<div className="px-4 py-8 max-h-[23rem] overflow-y-auto">
 							{value === VideoTab.Description && (
 								<PresentationDetails
 									presentation={presentation}

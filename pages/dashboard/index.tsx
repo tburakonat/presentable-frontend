@@ -44,7 +44,7 @@ function DashboardPage() {
 						<Link
 							key={option.link}
 							href={option.link}
-							className="block bg-white border border-gray-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow"
+							className="block bg-white dark:bg-slate-800 border border-gray-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow"
 						>
 							{option.name}
 						</Link>

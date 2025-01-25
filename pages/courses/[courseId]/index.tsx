@@ -75,7 +75,7 @@ function CourseDetailsPage(props: CourseDetailsPageProps) {
 								{myPresentations.map(presentation => (
 									<Link
 										key={presentation.id}
-										className="p-4 shadow-md rounded-md bg-gray-100"
+										className="block bg-white dark:bg-slate-800 border border-gray-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow"
 										href={`/courses/${course.id}/presentations/${presentation.id}`}
 									>
 										<h3 className="text-xl">

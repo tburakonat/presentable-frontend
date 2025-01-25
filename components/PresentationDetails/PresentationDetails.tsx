@@ -20,7 +20,7 @@ function PresentationDetails({ presentation }: IPresentationDetailsProps) {
 	};
 
 	return (
-		<div className="rounded-lg">
+		<div>
 			<h1 className="text-2xl md:text-3xl font-bold mb-4">
 				{presentation.title}
 			</h1>

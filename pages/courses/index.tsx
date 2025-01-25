@@ -54,7 +54,7 @@ function CoursesPage() {
 							<Link
 								key={course.id}
 								href={`/courses/${course.id}`}
-								className="block bg-white border border-gray-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow"
+								className="block bg-white dark:bg-slate-800 border border-gray-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow"
 							>
 								<h4 className="text-2xl">{course.name}</h4>
 								<p>
@@ -76,7 +76,7 @@ function CoursesPage() {
 							<Link
 								key={course.id}
 								href={`/courses/${course.id}`}
-								className="block bg-white border border-gray-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow"
+								className="block bg-white dark:bg-slate-800 border border-gray-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow"
 							>
 								<h4 className="text-xl">{course.name}</h4>
 								<p>
