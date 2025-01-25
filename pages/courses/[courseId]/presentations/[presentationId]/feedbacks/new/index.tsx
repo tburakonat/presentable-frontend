@@ -11,6 +11,7 @@ import {
 	withAuth,
 	ErrorMessage,
 	Loading,
+	Breadcrumbs,
 } from "@/components";
 import { useVideoTimestamp } from "@/hooks";
 import { VideoTab } from "@/types";
@@ -51,6 +52,23 @@ function CreateFeedbackPage(props: CreateFeedbackPageProps) {
 		return <p>Presentation not found</p>;
 	}
 
+	const breadcrumbs = [
+		{ title: "Dashboard", link: "/dashboard" },
+		{ title: "Courses", link: "/courses" },
+		{
+			title: presentation.course.name,
+			link: `/courses/${presentation.course.id}`,
+		},
+		{
+			title: presentation.title,
+			link: `/courses/${presentation.course.id}/presentations/${presentation.id}`,
+		},
+		{
+			title: "New Feedback",
+			link: `/courses/${presentation.course.id}/presentations/${presentation.id}/new`,
+		},
+	];
+
 	const handleTimeUpdate = () => {
 		if (videoRef.current) {
 			setVideoTime(videoRef.current.currentTime);
@@ -69,7 +87,8 @@ function CreateFeedbackPage(props: CreateFeedbackPageProps) {
 				<title>{presentation.title} - New Feedback</title>
 			</Head>
 			<div className="container mx-auto p-6">
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+				<Breadcrumbs breadcrumbs={breadcrumbs} />
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 					{/* Left Column: Video and Feedback */}
 					<div className="flex flex-col space-y-6">
 						<video

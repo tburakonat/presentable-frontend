@@ -3,7 +3,12 @@ import Link from "next/link";
 
 import { useSession } from "@/context";
 import { useCoursesQuery } from "@/helpers/queries";
-import { withAuth } from "@/components";
+import { Breadcrumbs, withAuth } from "@/components";
+
+const breadcrumbs = [
+	{ title: "Dashboard", link: "/dashboard" },
+	{ title: "Courses", link: "/courses" },
+];
 
 function CoursesPage() {
 	const { isLoading, error, data: courses } = useCoursesQuery();
@@ -40,9 +45,10 @@ function CoursesPage() {
 			<Head>
 				<title>Courses</title>
 			</Head>
-			<div className="container mx-auto p-4">
-				<div className="mb-8">
-					<h2 className="text-4xl mb-6">Alle Kurse</h2>
+			<div className="container mx-auto p-6">
+				<Breadcrumbs breadcrumbs={breadcrumbs} />
+				<div className="my-6">
+					<h2 className="text-2xl mb-6">Alle Kurse</h2>
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 						{courses.data.map(course => (
 							<Link
@@ -64,7 +70,7 @@ function CoursesPage() {
 					</div>
 				</div>
 				<div className="mb-8">
-					<h2 className="text-4xl mb-6">Meine Kurse</h2>
+					<h2 className="text-2xl mb-6">Meine Kurse</h2>
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 						{myCourses.map(course => (
 							<Link
@@ -72,7 +78,7 @@ function CoursesPage() {
 								href={`/courses/${course.id}`}
 								className="block bg-white border border-gray-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow"
 							>
-								<h4 className="text-2xl">{course.name}</h4>
+								<h4 className="text-xl">{course.name}</h4>
 								<p>
 									{course.teachers.map(teacher => (
 										<span key={teacher.id}>

@@ -18,6 +18,7 @@ import { EventValidationBadge } from "./EventValidationBadge";
 import { CommentModal } from "./CommentModal";
 import { ErrorMessage } from "./ErrorMessage";
 import { Loading } from "./Loading";
+import { Breadcrumbs } from "./Breadcrumbs";
 
 export {
 	Navbar,
@@ -40,4 +41,5 @@ export {
 	CommentModal,
 	ErrorMessage,
 	Loading,
+	Breadcrumbs,
 };

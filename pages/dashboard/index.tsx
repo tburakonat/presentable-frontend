@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useSession } from "@/context";
-import { withAuth } from "@/components";
+import { withAuth, Breadcrumbs } from "@/components";
 import Head from "next/head";
 
 const dashboardOptions = [
@@ -18,6 +18,13 @@ const dashboardOptions = [
 	},
 ];
 
+const breadcrumbs = [
+	{
+		title: "Dashboard",
+		link: "/dashboard",
+	},
+];
+
 function DashboardPage() {
 	const { user, isLoading } = useSession();
 
@@ -29,8 +36,9 @@ function DashboardPage() {
 			<Head>
 				<title>Dashboard</title>
 			</Head>
-			<div>
-				<h1 className="text-4xl mb-6">Hello {user?.username}</h1>
+			<div className="container mx-auto p-6">
+				<Breadcrumbs breadcrumbs={breadcrumbs} />
+				<h1 className="text-2xl my-6">Hello {user?.username}</h1>
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
 					{dashboardOptions.map(option => (
 						<Link

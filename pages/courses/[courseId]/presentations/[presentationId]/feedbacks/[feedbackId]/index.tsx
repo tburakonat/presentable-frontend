@@ -12,6 +12,7 @@ import {
 	withAuth,
 	Loading,
 	ErrorMessage,
+	Breadcrumbs,
 } from "@/components";
 import { useVideoTimestamp } from "@/hooks";
 import { useFeedbackDetailsQuery } from "@/helpers/queries";
@@ -52,6 +53,23 @@ function PresentationFeedbackDetailsPage() {
 		return <p>Presentation not found</p>;
 	}
 
+	const breadcrumbs = [
+		{ title: "Dashboard", link: "/dashboard" },
+		{ title: "Courses", link: "/courses" },
+		{
+			title: presentation.course.name,
+			link: `/courses/${presentation.course.id}`,
+		},
+		{
+			title: presentation.title,
+			link: `/courses/${presentation.course.id}/presentations/${presentation.id}`,
+		},
+		{
+			title: "Feedback",
+			link: `/courses/${presentation.course.id}/presentations/${presentation.id}/feedbacks/${feedback.id}`,
+		},
+	];
+
 	const handleTimeUpdate = () => {
 		if (videoRef.current) {
 			setVideoTime(videoRef.current.currentTime);
@@ -71,7 +89,8 @@ function PresentationFeedbackDetailsPage() {
 				<title>{presentation.title} - Feedback</title>
 			</Head>
 			<div className="container mx-auto p-6">
-				<div className="grid grid-cols-1 xl:grid-cols-2 gap-4 p-4">
+				<Breadcrumbs breadcrumbs={breadcrumbs} />
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 					{/* Video Section */}
 					<section className="col-span-2 xl:col-span-1 flex flex-col gap-4 p-4">
 						<video
