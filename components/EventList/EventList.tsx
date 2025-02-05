@@ -71,13 +71,17 @@ const EventList = (props: EventProps) => {
 				const { feedbackFired, expertValidation } =
 					interval.annotations;
 
+				if (!feedbackFired) {
+					return null;
+				}
+
 				if (
 					user?.role === "STUDENT" &&
-					feedbackFired &&
 					expertValidation === ExpertValidation.INVALIDATED
 				) {
 					return null;
 				}
+
 				return (
 					<div
 						key={interval.id}
