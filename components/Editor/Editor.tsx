@@ -152,13 +152,21 @@ export default function Editor(props: IEditorProps) {
 				setTemplates={setTemplates}
 			/>
 			<EditorContent editor={editor} />
-			<button
-				type="submit"
-				className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 self-start"
-				onClick={handleSubmit}
-			>
-				Submit Feedback
-			</button>
+			<div className="flex flex-row justify-end gap-2 mt-2">
+				<button
+					type="submit"
+					className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 self-start"
+					onClick={handleSubmit}
+				>
+					Create Feedback
+				</button>
+				<button
+					type="submit"
+					className="px-4 py-2 bg-purple-500 text-white rounded-lg shadow-md hover:bg-purple-600 self-start"
+				>
+					Create Draft
+				</button>
+			</div>
 		</div>
 	);
 }
