@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { convertTimestampToSeconds } from "@/helpers/helpers";
 import { useRouter } from "next/router";
 import { CommentModal } from "@/components";
+import { Tooltip } from "@mui/material";
 
 interface ITranscriptListProps {
 	transcript: Transcript | null;
@@ -15,7 +16,6 @@ interface ITranscriptListProps {
 
 const TranscriptList = (props: ITranscriptListProps) => {
 	const router = useRouter();
-	const transcriptListRef = useRef<HTMLDivElement | null>(null);
 	const editor = useAtomValue(editorAtom);
 	const activeSentenceRef = useRef<HTMLSpanElement | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -70,23 +70,42 @@ const TranscriptList = (props: ITranscriptListProps) => {
 		const range = selection.getRangeAt(0);
 		const selectionRect = range.getBoundingClientRect();
 
-		// Finde das nächste übergeordnete <div>, das die Section enthält
-		let parentDiv = selection.anchorNode?.parentElement;
+		// #region Get section-container
+		let sectionContainer = selection.anchorNode?.parentElement;
 		while (
-			parentDiv &&
-			!parentDiv.classList.contains("section-container")
+			sectionContainer &&
+			!sectionContainer.classList.contains("section-container")
 		) {
-			parentDiv = parentDiv.parentElement;
+			sectionContainer = sectionContainer.parentElement;
 		}
 
-		if (!parentDiv) return;
+		if (!sectionContainer) return;
 
-		const containerRect = parentDiv.getBoundingClientRect();
+		const sectionContainerRect = sectionContainer.getBoundingClientRect();
+
+		// #endregion
+
+		// #region Get transcription-list
+		let transcriptionList = selection.anchorNode?.parentElement;
+		while (
+			transcriptionList &&
+			!transcriptionList.classList.contains("transcription-list")
+		) {
+			transcriptionList = transcriptionList.parentElement;
+		}
+
+		if (!transcriptionList) return;
+
+		const transcriptionListRect = transcriptionList.getBoundingClientRect();
+		// #endregion
 
 		setSelectedText(text);
 		setSelectionCoords({
-			top: selectionRect.top + window.scrollY,
-			left: containerRect.right + window.scrollX + 10,
+			top:
+				selectionRect.top -
+				transcriptionListRect.top +
+				transcriptionList.scrollTop,
+			left: sectionContainerRect.right - transcriptionListRect.left - 50,
 		});
 	};
 
@@ -112,12 +131,12 @@ const TranscriptList = (props: ITranscriptListProps) => {
 				onSave={handleSaveComment}
 				text={selectedText}
 			/>
-			<div className="space-y-4 " ref={transcriptListRef}>
+			<div className="relative space-y-4 transcription-list">
 				{props.transcript.Intervals.map(interval => {
 					return (
 						<div
 							key={interval.text}
-							className="p-4 mb-4 border border-gray-200 rounded-md dark:bg-slate-800 text-pretty text-justify section-container"
+							className="p-6 mb-4 border border-gray-200 rounded-md dark:bg-slate-800 text-pretty text-justify section-container"
 							onMouseDown={handleMouseDown}
 							onMouseUp={handleMouseUp}
 						>
@@ -163,21 +182,18 @@ const TranscriptList = (props: ITranscriptListProps) => {
 								);
 							})}
 							{selectionCoords && (
-								<button
-									style={{
-										position: "absolute",
-										top: selectionCoords.top,
-										left: selectionCoords.left,
-										background: "yellow",
-										border: "1px solid black",
-										padding: "4px 8px",
-										cursor: "pointer",
-										zIndex: 1000,
-									}}
-									onClick={() => setIsModalOpen(true)}
-								>
-									💬
-								</button>
+								<Tooltip title="Add comment">
+									<button
+										style={{
+											top: selectionCoords.top,
+											left: selectionCoords.left,
+										}}
+										className="absolute bg-white dark:bg-slate-700 shadow-sm rounded-3xl py-1 px-2 w-8 h-8 flex items-center justify-center translate-x-[100%] cursor-pointer"
+										onClick={() => setIsModalOpen(true)}
+									>
+										<i className="ri-chat-quote-line text-blue-500"></i>
+									</button>
+								</Tooltip>
 							)}
 						</div>
 					);
