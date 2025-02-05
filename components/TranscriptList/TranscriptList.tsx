@@ -35,7 +35,7 @@ const TranscriptList = (props: ITranscriptListProps) => {
 	// }, [props.videoTime]);
 
 	if (!props.transcript) {
-		return <div>No transcript available</div>;
+		return <div>There is no transcript for this presentation</div>;
 	}
 
 	const handleSentenceClick = (timestamp: string) => {

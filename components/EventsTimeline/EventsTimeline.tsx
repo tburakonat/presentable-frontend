@@ -1,6 +1,6 @@
 import { Event, ExpertValidation } from "@/types";
-import { Tooltip } from "../Tooltip";
 import { convertTimestampToSeconds } from "@/helpers/helpers";
+import { Tooltip } from "@mui/material";
 
 interface IEventsTimelineProps {
 	events: Event | null;
@@ -53,7 +53,7 @@ const EventsTimeline = (props: IEventsTimelineProps) => {
 					return (
 						<Tooltip
 							key={event.start}
-							tooltipComponent={event.annotations.feedbackMessage}
+							title={event.annotations.feedbackMessage}
 							style={{
 								left: `${position}%`,
 							}}

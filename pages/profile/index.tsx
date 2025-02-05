@@ -15,7 +15,7 @@ function ProfilePage() {
 			<Head>
 				<title>Profile</title>
 			</Head>
-			<div className="container mx-auto p-6">
+			<div className="p-6">
 				<Breadcrumbs breadcrumbs={breadcrumbs} />
 				<h1 className="text-2xl my-6">Profile</h1>
 				<p>First name: {user?.first_name}</p>

@@ -36,7 +36,7 @@ function DashboardPage() {
 			<Head>
 				<title>Dashboard</title>
 			</Head>
-			<div className="container mx-auto p-6">
+			<div className="p-6">
 				<Breadcrumbs breadcrumbs={breadcrumbs} />
 				<h1 className="text-2xl my-6">Hello {user?.username}</h1>
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">

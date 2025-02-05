@@ -1,8 +1,8 @@
 import { Editor } from "@tiptap/react";
 import styles from "./Menubar.module.css";
-import { Tooltip } from "@/components";
 import { Template } from "@/types";
 import { Dispatch, SetStateAction } from "react";
+import { Tooltip } from "@mui/material";
 
 interface IMenubarProps {
 	editor: Editor | null;
@@ -110,69 +110,102 @@ export default function Menubar({
 	};
 
 	return (
-		<div className={styles.menubar}>
-			<Tooltip tooltipComponent="Bold">
-				<button onClick={handleBold}>
-					<i className="ri-bold"></i>
-				</button>
-			</Tooltip>
-			<Tooltip tooltipComponent="Italic">
-				<button onClick={handleItalic}>
-					<i className="ri-italic"></i>
-				</button>
-			</Tooltip>
-			<Tooltip tooltipComponent="Link">
-				<button onClick={setLink}>
-					<i className="ri-link"></i>
-				</button>
-			</Tooltip>
-			<Tooltip tooltipComponent="Unlink">
-				<button onClick={unsetLink}>
-					<i className="ri-link-unlink"></i>
-				</button>
-			</Tooltip>
-			<Tooltip tooltipComponent="Undo">
-				<button onClick={handleUndo} disabled={!editor.can().undo()}>
-					<i className="ri-arrow-go-back-line"></i>
-				</button>
-			</Tooltip>
-			<Tooltip tooltipComponent="Redo">
-				<button onClick={handleRedo} disabled={!editor.can().redo()}>
-					<i className="ri-arrow-go-forward-line"></i>
-				</button>
-			</Tooltip>
-			<div className="ml-auto">
+		<div
+			className={`${styles.menubarContainer} p-2 bg-slate-800 rounded-t-lg text-white`}
+		>
+			<div className="flex gap-2">
+				<Tooltip title="Bold">
+					<button
+						onClick={handleBold}
+						className="cursor-pointer disabled:cursor-not-allowed
+						disabled:text-gray-500 hover:text-blue-500 w-[30px] h-[30px]"
+					>
+						<i className="ri-bold"></i>
+					</button>
+				</Tooltip>
+				<Tooltip title="Italic">
+					<button
+						onClick={handleItalic}
+						className="cursor-pointer disabled:cursor-not-allowed
+						disabled:text-gray-500 hover:text-blue-500 w-[30px] h-[30px]"
+					>
+						<i className="ri-italic"></i>
+					</button>
+				</Tooltip>
+				<Tooltip title="Link">
+					<button
+						onClick={setLink}
+						className="cursor-pointer disabled:cursor-not-allowed
+						disabled:text-gray-500 hover:text-blue-500 w-[30px] h-[30px]"
+					>
+						<i className="ri-link"></i>
+					</button>
+				</Tooltip>
+				<Tooltip title="Unlink">
+					<button
+						onClick={unsetLink}
+						className="cursor-pointer disabled:cursor-not-allowed
+						disabled:text-gray-500 hover:text-blue-500 w-[30px] h-[30px]"
+					>
+						<i className="ri-link-unlink"></i>
+					</button>
+				</Tooltip>
+				<Tooltip title="Undo">
+					<button
+						onClick={handleUndo}
+						className="cursor-pointer disabled:cursor-not-allowed
+						disabled:text-gray-500 hover:text-blue-500 w-[30px] h-[30px]"
+						disabled={!editor.can().undo()}
+					>
+						<i className="ri-arrow-go-back-line"></i>
+					</button>
+				</Tooltip>
+				<Tooltip title="Redo">
+					<button
+						onClick={handleRedo}
+						className="cursor-pointer disabled:cursor-not-allowed
+						disabled:text-gray-500 hover:text-blue-500 w-[30px] h-[30px]"
+						disabled={!editor.can().redo()}
+					>
+						<i className="ri-arrow-go-forward-line"></i>
+					</button>
+				</Tooltip>
+			</div>
+			<div className="flex gap-2">
 				{templates.map(template => (
-					<span key={template.id} className={styles.template}>
-						<Tooltip
-							tooltipComponent={`Use template: ${template.name}`}
-						>
+					<div
+						key={template.id}
+						className="flex gap-2 border border-white p-1 rounded-sm"
+					>
+						<Tooltip title={`Use template: ${template.name}`}>
 							<button
 								onClick={() => fillTemplate(template.id)}
+								className="cursor-pointer disabled:cursor-not-allowed
+								disabled:text-gray-500 hover:text-blue-500 w-[30px] h-[30px]"
 								tabIndex={0}
 							>
 								<i className="ri-file-edit-fill"></i>
 							</button>
 						</Tooltip>
-						<Tooltip
-							tooltipComponent={`Delete template: ${template.name}`}
-						>
+						<Tooltip title={`Delete template: ${template.name}`}>
 							<button
-								tabIndex={0}
 								onClick={() => deleteTemplate(template.id)}
+								className="cursor-pointer disabled:cursor-not-allowed
+								disabled:text-gray-500 hover:text-blue-500 w-[30px] h-[30px]"
+								tabIndex={0}
 							>
 								<i className="ri-delete-bin-line"></i>
 							</button>
 						</Tooltip>
-					</span>
+					</div>
 				))}
-				{templates.length < 5 && (
-					<Tooltip
-						tooltipComponent={
-							"Create new template from current content"
-						}
-					>
-						<button onClick={addTemplate}>
+				{templates.length < 3 && (
+					<Tooltip title="Create new template from current content">
+						<button
+							onClick={addTemplate}
+							className="cursor-pointer disabled:cursor-not-allowed
+							disabled:text-gray-500 hover:text-blue-500 w-[30px] h-[30px]"
+						>
 							<i className="ri-file-add-fill"></i>
 						</button>
 					</Tooltip>

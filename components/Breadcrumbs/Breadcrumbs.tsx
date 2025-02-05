@@ -11,7 +11,7 @@ interface BreadcrumbsProps {
 
 const Breadcrumbs = (props: BreadcrumbsProps) => {
 	return (
-		<nav className="flex" aria-label="Breadcrumb">
+		<nav className="flex overflow-x-auto" aria-label="Breadcrumb">
 			<ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
 				<li className="inline-flex items-center">
 					<Link
@@ -50,7 +50,7 @@ const Breadcrumbs = (props: BreadcrumbsProps) => {
 							</svg>
 							<Link
 								href={breadcrumb.link}
-								className="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white"
+								className="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white truncate"
 							>
 								{breadcrumb.title}
 							</Link>

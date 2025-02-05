@@ -43,14 +43,14 @@ function PresentationPage() {
 			</Head>
 			<div className="container mx-auto p-6">
 				<Breadcrumbs breadcrumbs={breadcrumbs} />
-				<div className="flex justify-between items-center my-6">
+				<div className="flex flex-col items-start gap-2 my-6 sm:flex-row sm:items-center sm:justify-between">
 					<h1 className="text-2xl">Presentations</h1>
 					<input
 						type="text"
 						value={searchText}
 						placeholder="Filter by text"
 						onChange={e => setSearchText(e.target.value)}
-						className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+						className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block sm:max-w-80 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 					/>
 				</div>
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

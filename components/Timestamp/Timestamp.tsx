@@ -1,4 +1,4 @@
-import { Tooltip } from "@/components";
+import { Tooltip } from "@mui/material";
 import styles from "./Timestamp.module.css";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -24,13 +24,11 @@ export default function Timestamp(props: ITimestampProps) {
 		props.onTimestampClick(timeInSeconds);
 	};
 
-	const customTooltip = (
-		<span>Jump to {props.timestamp}</span>
-	);
+	const customTooltip = <span>Jump to {props.timestamp}</span>;
 
 	return (
 		<span className={styles.timestamp}>
-			<Tooltip tooltipComponent={customTooltip}>
+			<Tooltip title={customTooltip}>
 				<Link
 					scroll={false}
 					href={updatedPath}

@@ -54,7 +54,7 @@ function CourseDetailsPage(props: CourseDetailsPageProps) {
 			<Head>
 				<title>{course.name}</title>
 			</Head>
-			<div className="container mx-auto p-6">
+			<div className="p-6">
 				<Breadcrumbs breadcrumbs={breadcrumbs} />
 				<h1 className="text-2xl mb-2 mt-6">{course.name}</h1>
 				<p className="mb-8">{course.description}</p>

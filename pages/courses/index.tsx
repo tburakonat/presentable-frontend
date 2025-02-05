@@ -45,7 +45,7 @@ function CoursesPage() {
 			<Head>
 				<title>Courses</title>
 			</Head>
-			<div className="container mx-auto p-6">
+			<div className="p-6">
 				<Breadcrumbs breadcrumbs={breadcrumbs} />
 				<div className="my-6">
 					<h2 className="text-2xl mb-6">Alle Kurse</h2>

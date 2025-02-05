@@ -1,7 +1,8 @@
 import { Presentation } from "@/types";
 import { useSession } from "@/context";
 import { useChangeVisibilityMutation } from "@/helpers/mutations";
-import { Badge, Tooltip } from "@/components";
+import { Badge } from "@/components";
+import { Tooltip } from "@mui/material";
 
 interface IPresentationDetailsProps {
 	presentation: Presentation;
@@ -41,7 +42,7 @@ function PresentationDetails({ presentation }: IPresentationDetailsProps) {
 					<p>
 						<span className="font-semibold">Visibility:</span>{" "}
 						<Tooltip
-							tooltipComponent={
+							title={
 								presentation.is_private
 									? "Make public"
 									: "Make private"

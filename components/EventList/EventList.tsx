@@ -19,7 +19,7 @@ const EventList = (props: EventProps) => {
 	);
 
 	if (!props.event) {
-		return <div>No events found</div>;
+		return <div>There are no events for this presentation</div>;
 	}
 
 	const handleClick = (startInterval: string) => {
