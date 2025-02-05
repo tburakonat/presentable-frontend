@@ -15,19 +15,24 @@ interface ITranscriptListProps {
 
 const TranscriptList = (props: ITranscriptListProps) => {
 	const router = useRouter();
+	const transcriptListRef = useRef<HTMLDivElement | null>(null);
 	const editor = useAtomValue(editorAtom);
 	const activeSentenceRef = useRef<HTMLSpanElement | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedText, setSelectedText] = useState("");
+	const [selectionCoords, setSelectionCoords] = useState<{
+		top: number;
+		left: number;
+	} | null>(null);
 
-	useEffect(() => {
-		if (activeSentenceRef.current) {
-			activeSentenceRef.current.scrollIntoView({
-				behavior: "smooth",
-				block: "center",
-			});
-		}
-	}, [props.videoTime]);
+	// useEffect(() => {
+	// 	if (activeSentenceRef.current) {
+	// 		activeSentenceRef.current.scrollIntoView({
+	// 			behavior: "smooth",
+	// 			block: "center",
+	// 		});
+	// 	}
+	// }, [props.videoTime]);
 
 	if (!props.transcript) {
 		return <div>No transcript available</div>;
@@ -53,22 +58,35 @@ const TranscriptList = (props: ITranscriptListProps) => {
 
 	const handleMouseUp = () => {
 		if (!router.asPath.includes("new")) return;
-		const activeSelection = document.getSelection();
-		const text = activeSelection?.toString();
 
-		if (!activeSelection || !text) {
-			toast.dismiss();
+		const selection = window.getSelection();
+		const text = selection?.toString().trim();
+
+		if (!selection || !text) {
+			setSelectionCoords(null);
 			return;
 		}
 
-		toast("Comment on this part of the transcript!", {
-			action: {
-				label: "Comment",
-				onClick: () => {
-					setSelectedText(text);
-					setIsModalOpen(true);
-				},
-			},
+		const range = selection.getRangeAt(0);
+		const selectionRect = range.getBoundingClientRect();
+
+		// Finde das nächste übergeordnete <div>, das die Section enthält
+		let parentDiv = selection.anchorNode?.parentElement;
+		while (
+			parentDiv &&
+			!parentDiv.classList.contains("section-container")
+		) {
+			parentDiv = parentDiv.parentElement;
+		}
+
+		if (!parentDiv) return;
+
+		const containerRect = parentDiv.getBoundingClientRect();
+
+		setSelectedText(text);
+		setSelectionCoords({
+			top: selectionRect.top + window.scrollY,
+			left: containerRect.right + window.scrollX + 10,
 		});
 	};
 
@@ -87,16 +105,19 @@ const TranscriptList = (props: ITranscriptListProps) => {
 		<>
 			<CommentModal
 				isOpen={isModalOpen}
-				onClose={() => setIsModalOpen(false)}
+				onClose={() => {
+					setIsModalOpen(false);
+					setSelectionCoords(null);
+				}}
 				onSave={handleSaveComment}
 				text={selectedText}
 			/>
-			<div className="space-y-4 ">
+			<div className="space-y-4 " ref={transcriptListRef}>
 				{props.transcript.Intervals.map(interval => {
 					return (
 						<div
 							key={interval.text}
-							className="p-4 mb-4 border border-gray-200 rounded-md dark:bg-slate-800 text-pretty text-justify"
+							className="p-4 mb-4 border border-gray-200 rounded-md dark:bg-slate-800 text-pretty text-justify section-container"
 							onMouseDown={handleMouseDown}
 							onMouseUp={handleMouseUp}
 						>
@@ -141,6 +162,23 @@ const TranscriptList = (props: ITranscriptListProps) => {
 									</React.Fragment>
 								);
 							})}
+							{selectionCoords && (
+								<button
+									style={{
+										position: "absolute",
+										top: selectionCoords.top,
+										left: selectionCoords.left,
+										background: "yellow",
+										border: "1px solid black",
+										padding: "4px 8px",
+										cursor: "pointer",
+										zIndex: 1000,
+									}}
+									onClick={() => setIsModalOpen(true)}
+								>
+									💬
+								</button>
+							)}
 						</div>
 					);
 				})}
