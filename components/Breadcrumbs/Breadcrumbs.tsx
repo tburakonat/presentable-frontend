@@ -31,7 +31,7 @@ const Breadcrumbs = (props: BreadcrumbsProps) => {
 					</Link>
 				</li>
 				{props.breadcrumbs.map(breadcrumb => (
-					<li>
+					<li key={breadcrumb.link}>
 						<div className="flex items-center">
 							<svg
 								className="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1"
@@ -42,9 +42,9 @@ const Breadcrumbs = (props: BreadcrumbsProps) => {
 							>
 								<path
 									stroke="currentColor"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth="2"
 									d="m1 9 4-4-4-4"
 								/>
 							</svg>

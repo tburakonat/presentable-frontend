@@ -5,8 +5,8 @@ import { editorAtom } from "@/atoms";
 import { toast } from "sonner";
 import { convertTimestampToSeconds } from "@/helpers/helpers";
 import { useRouter } from "next/router";
-import { CommentModal } from "@/components";
 import { Tooltip } from "@mui/material";
+import { useDialogs } from "@toolpad/core/useDialogs";
 
 interface ITranscriptListProps {
 	transcript: Transcript | null;
@@ -16,9 +16,9 @@ interface ITranscriptListProps {
 
 const TranscriptList = (props: ITranscriptListProps) => {
 	const router = useRouter();
+	const dialogs = useDialogs();
 	const editor = useAtomValue(editorAtom);
 	const activeSentenceRef = useRef<HTMLSpanElement | null>(null);
-	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedText, setSelectedText] = useState("");
 	const [selectionCoords, setSelectionCoords] = useState<{
 		top: number;
@@ -120,86 +120,98 @@ const TranscriptList = (props: ITranscriptListProps) => {
 		toast.success("Comment added successfully!");
 	};
 
-	return (
-		<>
-			<CommentModal
-				isOpen={isModalOpen}
-				onClose={() => {
-					setIsModalOpen(false);
-					setSelectionCoords(null);
-				}}
-				onSave={handleSaveComment}
-				text={selectedText}
-			/>
-			<div className="relative space-y-4 transcription-list">
-				{props.transcript.Intervals.map(interval => {
-					return (
-						<div
-							key={interval.text}
-							className="p-6 mb-4 border border-gray-200 rounded-md dark:bg-slate-800 text-pretty text-justify section-container"
-							onMouseDown={handleMouseDown}
-							onMouseUp={handleMouseUp}
-						>
-							<p className="mb-1">
-								{formatSecondsToMinutes(interval.start)}
-							</p>
-							{interval.sentences.map(sentence => {
-								const isActiveSentence =
-									props.videoTime >=
-										convertTimestampToSeconds(
-											sentence.start
-										) &&
-									props.videoTime <
-										convertTimestampToSeconds(
-											sentence.end
-										) &&
-									props.videoTime <
-										convertTimestampToSeconds(interval.end);
+	const handleAddComment = async () => {
+		const comment = await dialogs.prompt(
+			<>
+				<label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+					Add your comment on this selected text
+				</label>
+				<p className="mt-1 text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-700 p-2 rounded-md">
+					{selectedText}
+				</p>
+			</>,
+			{
+				okText: "Save",
+				cancelText: "Cancel",
+				title: "Add Comment",
+			}
+		);
 
-								return (
-									<React.Fragment key={sentence.start}>
-										<span
-											ref={
-												isActiveSentence
-													? activeSentenceRef
-													: null
-											}
-											className={`hover:transition-all hover:bg-yellow-300 hover:text-black cursor-pointer ${
-												isActiveSentence
-													? "bg-yellow-500 text-black"
-													: ""
-											}`}
-											onClick={() =>
-												handleSentenceClick(
-													sentence.start
-												)
-											}
-										>
-											{sentence.text}
-										</span>
-										<span> </span>
-									</React.Fragment>
-								);
-							})}
-							{selectionCoords && (
-								<Tooltip title="Add comment">
-									<button
-										style={{
-											top: selectionCoords.top,
-											left: selectionCoords.left,
-										}}
-										className="absolute bg-white dark:bg-slate-700 shadow-sm rounded-3xl py-1 px-2 w-8 h-8 flex items-center justify-center translate-x-[100%] cursor-pointer"
-										onClick={() => setIsModalOpen(true)}
+		if (!comment) return;
+
+		if (comment.trim() === "") {
+			toast.error("Comment cannot be empty!");
+			return;
+		}
+
+		handleSaveComment(comment);
+		setSelectedText("");
+		setSelectionCoords(null);
+	};
+
+	return (
+		<div className="relative space-y-4 transcription-list">
+			{props.transcript.Intervals.map(interval => {
+				return (
+					<div
+						key={interval.text}
+						className="p-6 mb-4 border border-gray-200 rounded-md dark:bg-slate-800 text-pretty text-justify section-container"
+						onMouseDown={handleMouseDown}
+						onMouseUp={handleMouseUp}
+					>
+						<p className="mb-1">
+							{formatSecondsToMinutes(interval.start)}
+						</p>
+						{interval.sentences.map(sentence => {
+							const isActiveSentence =
+								props.videoTime >=
+									convertTimestampToSeconds(sentence.start) &&
+								props.videoTime <
+									convertTimestampToSeconds(sentence.end) &&
+								props.videoTime <
+									convertTimestampToSeconds(interval.end);
+
+							return (
+								<React.Fragment key={sentence.start}>
+									<span
+										ref={
+											isActiveSentence
+												? activeSentenceRef
+												: null
+										}
+										className={`hover:transition-all hover:bg-yellow-300 hover:text-black cursor-pointer ${
+											isActiveSentence
+												? "bg-yellow-500 text-black"
+												: ""
+										}`}
+										onClick={() =>
+											handleSentenceClick(sentence.start)
+										}
 									>
-										<i className="ri-chat-quote-line text-blue-500"></i>
-									</button>
-								</Tooltip>
-							)}
-						</div>
-					);
-				})}
-			</div>
-		</>
+										{sentence.text}
+									</span>
+									<span> </span>
+								</React.Fragment>
+							);
+						})}
+						{selectionCoords && (
+							<Tooltip title="Add comment">
+								<button
+									style={{
+										top: selectionCoords.top,
+										left: selectionCoords.left,
+									}}
+									className="absolute bg-white dark:bg-slate-700 shadow-sm rounded-3xl py-1 px-2 w-8 h-8 flex items-center justify-center translate-x-[100%] cursor-pointer"
+									onClick={handleAddComment}
+								>
+									<i className="ri-chat-quote-line text-blue-500"></i>
+								</button>
+							</Tooltip>
+						)}
+					</div>
+				);
+			})}
+		</div>
 	);
 };
 

@@ -3,6 +3,7 @@ import styles from "./Menubar.module.css";
 import { Template } from "@/types";
 import { Dispatch, SetStateAction } from "react";
 import { Tooltip } from "@mui/material";
+import { useDialogs } from "@toolpad/core/useDialogs";
 
 interface IMenubarProps {
 	editor: Editor | null;
@@ -15,6 +16,8 @@ export default function Menubar({
 	templates,
 	setTemplates,
 }: IMenubarProps) {
+	const dialogs = useDialogs();
+
 	if (!editor) {
 		return null;
 	}
@@ -27,9 +30,12 @@ export default function Menubar({
 		editor.chain().focus().toggleItalic().run();
 	};
 
-	const setLink = () => {
-		const previousUrl = editor.getAttributes("link").href;
-		const url = window.prompt("URL", previousUrl);
+	const setLink = async () => {
+		const url = await dialogs.prompt("URL", {
+			okText: "Save",
+			cancelText: "Cancel",
+			title: "Insert Link",
+		});
 
 		// cancelled
 		if (url === null) {
@@ -64,7 +70,21 @@ export default function Menubar({
 		editor.chain().focus().redo().run();
 	};
 
-	const fillTemplate = (templateId: number) => {
+	const fillTemplate = async (templateId: number) => {
+		const useTemplate = await dialogs.confirm(
+			"Are you sure you want to use this template? This will replace the current content. You can undo this action.",
+			{
+				okText: "Yes",
+				cancelText: "No",
+				title: "Use Template",
+				severity: "info",
+			}
+		);
+
+		if (!useTemplate) {
+			return;
+		}
+
 		editor
 			.chain()
 			.focus()
@@ -76,13 +96,19 @@ export default function Menubar({
 			.run();
 	};
 
-	const addTemplate = () => {
-		if (templates.length >= 5) {
-			alert("You can only have 5 templates");
+	const addTemplate = async () => {
+		if (templates.length >= 3) {
+			await dialogs.alert("You can only have 3 templates", {
+				title: "Max Templates",
+			});
 			return;
 		}
 
-		const name = prompt("Name your template");
+		const name = await dialogs.prompt("Name this new template", {
+			okText: "Save",
+			cancelText: "Cancel",
+			title: "Create Template",
+		});
 		if (!name) {
 			return;
 		}
@@ -97,9 +123,15 @@ export default function Menubar({
 		]);
 	};
 
-	const deleteTemplate = (templateId: number) => {
-		const saveTemplate = confirm(
-			"Are you sure you want to delete this template?"
+	const deleteTemplate = async (templateId: number) => {
+		const saveTemplate = await dialogs.confirm(
+			"Are you sure you want to delete this template?",
+			{
+				okText: "Yes",
+				cancelText: "No",
+				title: "Delete Template",
+				severity: "warning",
+			}
 		);
 
 		if (saveTemplate) {
@@ -113,7 +145,7 @@ export default function Menubar({
 		<div
 			className={`${styles.menubarContainer} p-2 bg-slate-800 rounded-t-lg text-white`}
 		>
-			<div className="flex gap-2">
+			<div className="flex gap-2 items-center">
 				<Tooltip title="Bold">
 					<button
 						onClick={handleBold}
@@ -151,27 +183,31 @@ export default function Menubar({
 					</button>
 				</Tooltip>
 				<Tooltip title="Undo">
-					<button
-						onClick={handleUndo}
-						className="cursor-pointer disabled:cursor-not-allowed
-						disabled:text-gray-500 hover:text-blue-500 w-[30px] h-[30px]"
-						disabled={!editor.can().undo()}
-					>
-						<i className="ri-arrow-go-back-line"></i>
-					</button>
+					<span>
+						<button
+							onClick={handleUndo}
+							className="cursor-pointer disabled:cursor-not-allowed
+							disabled:text-gray-500 hover:text-blue-500 w-[30px] h-[30px]"
+							disabled={!editor.can().undo()}
+						>
+							<i className="ri-arrow-go-back-line"></i>
+						</button>
+					</span>
 				</Tooltip>
 				<Tooltip title="Redo">
-					<button
-						onClick={handleRedo}
-						className="cursor-pointer disabled:cursor-not-allowed
-						disabled:text-gray-500 hover:text-blue-500 w-[30px] h-[30px]"
-						disabled={!editor.can().redo()}
-					>
-						<i className="ri-arrow-go-forward-line"></i>
-					</button>
+					<span>
+						<button
+							onClick={handleRedo}
+							className="cursor-pointer disabled:cursor-not-allowed
+							disabled:text-gray-500 hover:text-blue-500 w-[30px] h-[30px]"
+							disabled={!editor.can().redo()}
+						>
+							<i className="ri-arrow-go-forward-line"></i>
+						</button>
+					</span>
 				</Tooltip>
 			</div>
-			<div className="flex gap-2">
+			<div className="flex gap-2 items-center">
 				{templates.map(template => (
 					<div
 						key={template.id}

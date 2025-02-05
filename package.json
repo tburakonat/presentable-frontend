@@ -17,6 +17,7 @@
     "@tiptap/pm": "^2.10.3",
     "@tiptap/react": "^2.10.3",
     "@tiptap/starter-kit": "^2.10.3",
+    "@toolpad/core": "^0.12.0",
     "axios": "^1.7.9",
     "cookie": "^1.0.2",
     "jotai": "^2.11.1",

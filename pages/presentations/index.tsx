@@ -41,7 +41,7 @@ function PresentationPage() {
 			<Head>
 				<title>Presentations</title>
 			</Head>
-			<div className="container mx-auto p-6">
+			<div className="p-6">
 				<Breadcrumbs breadcrumbs={breadcrumbs} />
 				<div className="flex flex-col items-start gap-2 my-6 sm:flex-row sm:items-center sm:justify-between">
 					<h1 className="text-2xl">Presentations</h1>

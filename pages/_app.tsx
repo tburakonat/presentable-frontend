@@ -7,17 +7,19 @@ import { SessionProvider, ReactQueryProvider } from "@/context";
 import { Toaster } from "sonner";
 import { Provider } from "jotai";
 import { editorStore } from "@/atoms";
-
+import { DialogsProvider } from "@toolpad/core/useDialogs";
 
 export default function App({ Component, pageProps }: AppProps) {
 	return (
 		<ReactQueryProvider>
 			<SessionProvider>
 				<Provider store={editorStore}>
-					<Layout>
-						<Component {...pageProps} />
-						<Toaster position="bottom-center" />
-					</Layout>
+					<DialogsProvider>
+						<Layout>
+							<Component {...pageProps} />
+							<Toaster position="bottom-center" />
+						</Layout>
+					</DialogsProvider>
 				</Provider>
 			</SessionProvider>
 		</ReactQueryProvider>
