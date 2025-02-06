@@ -57,7 +57,8 @@ export interface Event {
 export enum ExpertValidation {
 	VALIDATED = "VALIDATED",
 	INVALIDATED = "INVALIDATED",
-	NOT_VALIDATED = "NOT_VALIDATED",
+    NOT_VALIDATED = "NOT_VALIDATED",
+    TO_REVIEW = "TO_REVIEW",
 }
 
 export interface Transcript {

@@ -27,27 +27,19 @@ const EventList = (props: EventProps) => {
 		props.onEventClick(time);
 	};
 
-	const handleChangeValidation = (eventId: number) => {
-		const VALIDATION_OPTIONS = [
-			ExpertValidation.VALIDATED,
-			ExpertValidation.INVALIDATED,
-		];
-
+	const handleChangeValidation = (
+		eventId: number,
+		newValidationStatus: ExpertValidation
+	) => {
 		const newIntervals = props.event!.Intervals.map(interval => {
 			if (interval.id === eventId) {
-				const newValidation = VALIDATION_OPTIONS.find(
-					option => option !== interval.annotations.expertValidation
-				);
-
-				if (newValidation) {
-					return {
-						...interval,
-						annotations: {
-							...interval.annotations,
-							expertValidation: newValidation,
-						},
-					};
-				}
+				return {
+					...interval,
+					annotations: {
+						...interval.annotations,
+						expertValidation: newValidationStatus,
+					},
+				};
 			}
 
 			return interval;
@@ -98,8 +90,9 @@ const EventList = (props: EventProps) => {
 									<EventValidationBadge
 										expertValidation={expertValidation}
 										feedbackFired={feedbackFired}
-										onChangeValidation={() =>
-											handleChangeValidation(interval.id)
+										eventId={interval.id}
+										onChangeValidation={
+											handleChangeValidation
 										}
 									/>
 								</div>
