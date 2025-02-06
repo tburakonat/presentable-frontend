@@ -88,7 +88,7 @@ function CreateFeedbackPage(props: CreateFeedbackPageProps) {
 			</Head>
 			<div className="p-6">
 				<Breadcrumbs breadcrumbs={breadcrumbs} />
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
 					{/* Left Column: Video and Feedback */}
 					<div className="flex flex-col space-y-6">
 						<video

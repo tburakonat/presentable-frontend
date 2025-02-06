@@ -90,7 +90,7 @@ function PresentationFeedbackDetailsPage() {
 			</Head>
 			<div className="p-6">
 				<Breadcrumbs breadcrumbs={breadcrumbs} />
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
 					{/* Video Section */}
 					<section className="col-span-2 xl:col-span-1 flex flex-col gap-4 p-4">
 						<video
