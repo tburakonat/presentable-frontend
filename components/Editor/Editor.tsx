@@ -160,12 +160,6 @@ export default function Editor(props: IEditorProps) {
 				>
 					Create Feedback
 				</button>
-				<button
-					type="submit"
-					className="px-4 py-2 bg-purple-500 text-white rounded-lg shadow-md hover:bg-purple-600 self-start"
-				>
-					Create Draft
-				</button>
 			</div>
 		</div>
 	);

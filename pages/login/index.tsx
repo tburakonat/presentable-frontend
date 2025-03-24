@@ -84,16 +84,6 @@ function LoginPage() {
 							{error}
 						</p>
 					)}
-
-					<p className="text-sm !mt-8 text-start">
-						Don't have an account?{" "}
-						<Link
-							href="/register"
-							className="text-blue-600 hover:underline ml-1 whitespace-nowrap font-semibold"
-						>
-							Register here
-						</Link>
-					</p>
 				</form>
 			</div>
 		</div>
