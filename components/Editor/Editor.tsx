@@ -96,6 +96,18 @@ export default function Editor(props: IEditorProps) {
 		return doc.body.innerHTML;
 	};
 
+	function convertMarkdownTimestampsToLinks(markdown: string) {
+		const timestampRegex = /(\d+:\d{2})/g;
+
+		return markdown.replace(timestampRegex, (_, timestamp) => {
+			const minutes = parseInt(timestamp.split(":")[0]);
+			const seconds = parseInt(timestamp.split(":")[1]);
+			const totalSeconds = minutes * 60 + seconds;
+
+			return `[${timestamp}](/courses/1/presentations/1/feedbacks/new?t=${totalSeconds})`;
+		});
+	}
+
 	const addCorrectHrefsToLinks = (content: string, feedbackURL: string) => {
 		// Regex für Timestamps (z. B. [1:20](/courses/1/presentations/1/feedbacks/new?t=80))
 		const timestampRegex =
@@ -114,12 +126,12 @@ export default function Editor(props: IEditorProps) {
 		if (!editor) return;
 
 		const htmlContent = editor.getHTML();
-		const processedContent = convertTimestampsToLinks(htmlContent);
-		const markdown = NodeHtmlMarkdown.translate(processedContent);
+		const markdown = NodeHtmlMarkdown.translate(htmlContent);
+		const processedMarkdown = convertMarkdownTimestampsToLinks(markdown);
 
 		try {
 			// 1. POST the feedback to the backend (hrefs are not correct yet because the feedback ID is not known. It looks like this: /courses/1/presentations/1/feedbacks/new?t=80)
-			const response = await createFeedback(markdown);
+			const response = await createFeedback(processedMarkdown);
 			const feedback = response.data;
 
 			// 2. PATCH the feedback content to add the correct hrefs to the timestamp links
