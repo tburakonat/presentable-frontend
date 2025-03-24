@@ -1,78 +1,78 @@
 export interface Feedback {
-    id: number;
-    presentation: Presentation;
-    content: string;
-    created_by: User;
-    created_at: string;
+	id: number;
+	presentation: Presentation;
+	content: string;
+	created_by: User;
+	created_at: string;
 }
 
 export interface Comment {
-    id: number;
-    feedback: number;
-    content: string;
+	id: number;
+	feedback: number;
+	content: string;
 	replies: Comment[];
-    parent_comment: number | null;
-    is_deleted: boolean;
-    created_at: string;
-    created_by: User;
+	parent_comment: number | null;
+	is_deleted: boolean;
+	created_at: string;
+	created_by: User;
 }
 
 export interface Course {
-    id: string;
-    name: string;
-    description: string;
-    students: User[];
-    teachers: User[];
+	id: string;
+	name: string;
+	description: string;
+	students: User[];
+	teachers: User[];
 }
 
 export interface User {
-    id: number;
-    first_name: string;
-    last_name: string;
-    email: string;
-    username: string;
-    role: UserRole;
+	id: number;
+	first_name: string;
+	last_name: string;
+	email: string;
+	username: string;
+	role: UserRole;
 }
 
 export enum UserRole {
-    TEACHER = "TEACHER",
-    STUDENT = "STUDENT",
-    ADMIN = "ADMIN",
+	TEACHER = "TEACHER",
+	STUDENT = "STUDENT",
+	ADMIN = "ADMIN",
 }
 
 export interface Event {
-    RecordingID: string;
-    Intervals: {
+	RecordingID: string;
+	Intervals: {
 		id: number;
-        start: string;
-        end: string;
-        annotations: {
-            feedbackFired: boolean;
-            feedbackMessage: string;
+		start: string;
+		end: string;
+		annotations: {
+			feedbackFired: boolean;
+			feedbackMessage: string;
 			expertValidation: ExpertValidation;
-        };
-    }[]
+		};
+	}[];
 }
 
 export enum ExpertValidation {
 	VALIDATED = "VALIDATED",
 	INVALIDATED = "INVALIDATED",
-    NOT_VALIDATED = "NOT_VALIDATED",
-    TO_REVIEW = "TO_REVIEW",
+	NOT_VALIDATED = "NOT_VALIDATED",
+	TO_REVIEW = "TO_REVIEW",
 }
 
 export interface Transcript {
-    RecordingID: string;
-    Intervals: {
-        start: string;
-        end: string;
-        text: string;
-        sentences: {
-            start: string;
-            end: string;
-            text: string;
-        }[]
-    }[]
+	RecordingID: string;
+	Intervals: {
+		start: string;
+		end: string;
+		text: string;
+		sentences: {
+			start: string;
+			end: string;
+			text: string;
+		}[];
+	}[];
 }
 
 export type Template = {
@@ -83,16 +83,16 @@ export type Template = {
 
 export enum StorageKey {
 	Templates = "presentable-feedback-editor-templates",
-    AccessToken = "presentable-access-token",
-    RefreshToken = "presentable-refresh-token",
+	AccessToken = "presentable-access-token",
+	RefreshToken = "presentable-refresh-token",
 }
 
 export enum VideoTab {
-    Description = "#description",
-    Events = "#events",
-    Transcription = "#transcription",
-    TranscriptionComments = "#transcription-comments",
-    Comments = "#comments",
+	Description = "#description",
+	Events = "#events",
+	Transcription = "#transcription",
+	TranscriptionComments = "#transcription-comments",
+	Comments = "#comments",
 }
 
 export type Presentation = {
@@ -106,5 +106,5 @@ export type Presentation = {
 	created_by: User;
 	course: Course;
 	created_at: string;
-    is_private: boolean;
+	is_private: boolean;
 };
