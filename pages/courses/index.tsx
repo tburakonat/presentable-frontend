@@ -57,14 +57,7 @@ function CoursesPage() {
 								className="block bg-white dark:bg-slate-800 border border-gray-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow"
 							>
 								<h4 className="text-2xl">{course.name}</h4>
-								<p>
-									{course.teachers.map(teacher => (
-										<span key={teacher.id}>
-											{teacher.first_name}{" "}
-											{teacher.last_name}
-										</span>
-									))}
-								</p>
+								<p>{course.description}</p>
 							</Link>
 						))}
 					</div>
@@ -79,14 +72,7 @@ function CoursesPage() {
 								className="block bg-white dark:bg-slate-800 border border-gray-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow"
 							>
 								<h4 className="text-xl">{course.name}</h4>
-								<p>
-									{course.teachers.map(teacher => (
-										<span key={teacher.id}>
-											{teacher.first_name}{" "}
-											{teacher.last_name}
-										</span>
-									))}
-								</p>
+								<p>{course.description}</p>
 							</Link>
 						))}
 					</div>

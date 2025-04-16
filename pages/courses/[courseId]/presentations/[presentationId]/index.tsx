@@ -18,10 +18,12 @@ import {
 	Breadcrumbs,
 } from "@/components";
 import { AxiosError } from "axios";
+import { useSession } from "@/context";
 
 interface PresentationDetailsPageProps {}
 
 function PresentationDetailsPage(props: PresentationDetailsPageProps) {
+	const { user } = useSession();
 	const router = useRouter();
 	const videoRef = useVideoTimestamp();
 	const [videoTime, setVideoTime] = useState(0);
@@ -48,6 +50,9 @@ function PresentationDetailsPage(props: PresentationDetailsPageProps) {
 
 	const presentation = presentationQuery.data?.data;
 	const feedbacks = feedbacksQuery.data?.data ?? [];
+	const myFeedbacks = feedbacks.filter(
+		fb => fb.created_by.username === user?.username
+	);
 
 	if (!presentation) {
 		return <p>Presentation not found</p>;
@@ -107,7 +112,7 @@ function PresentationDetailsPage(props: PresentationDetailsPageProps) {
 						/>
 						<PresentationFeedbackSection
 							presentation={presentation}
-							feedbacks={feedbacks}
+							feedbacks={myFeedbacks}
 							onTimestampClick={handleTimestampClick}
 						/>
 					</div>
