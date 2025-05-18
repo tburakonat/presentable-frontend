@@ -51,7 +51,13 @@ function PresentationDetailsPage(props: PresentationDetailsPageProps) {
 	const presentation = presentationQuery.data?.data;
 	const feedbacks = feedbacksQuery.data?.data ?? [];
 	const myFeedbacks = feedbacks.filter(
-		fb => fb.created_by.username === user?.username
+		fb => {
+			if (user?.role === "TEACHER") {
+				return fb.created_by.id === user?.id;
+			}
+			
+			return true;
+		}
 	);
 
 	if (!presentation) {
